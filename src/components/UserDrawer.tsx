@@ -1,14 +1,48 @@
 import { X } from "lucide-react";
-import type { RootState } from "../app/store";
+import type { AppDispatch, RootState } from "../app/store";
 import { useDispatch, useSelector } from "react-redux";
 import { closeUserDrawer } from "../app/features/userDrawerSlice";
 import Input from "./ui/Input";
 import Button from "./ui/Button";
 import { NavLink } from "react-router-dom";
+import { SubmitHandler, useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { loginSchema } from "../validation";
+import * as z from "zod"
+import ErrorMessage from "./ui/ErrorMessage";
+import { selectLogin, userLogin } from "../app/features/loginSlice";
 
-const MenuDrawer = () => {
-    const dispatch = useDispatch();
+const UserDrawer = () => {
+
+    const dispatch = useDispatch<AppDispatch>(); 
     const isOpenUserDrawer = useSelector((state: RootState) => state.userDrawer.isOpenUserDrawer);
+    const { loading, data, error } = useSelector(selectLogin)
+
+    // useForm
+    type ILoginInput = z.infer<typeof loginSchema>;
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        clearErrors,
+        formState: { errors }
+    } = useForm<ILoginInput>({ resolver: zodResolver(loginSchema) })
+
+
+    // Form submission handler
+    const onSubmit: SubmitHandler<ILoginInput> = async (data) => {
+
+        const result = await dispatch(userLogin(data))
+        if (userLogin.fulfilled.match(result)) {
+            dispatch(closeUserDrawer())
+        }
+        
+        setTimeout(() => reset(), 3000);
+
+        console.log(data)
+    }
+
 
     return (
         <>
@@ -16,7 +50,11 @@ const MenuDrawer = () => {
             {isOpenUserDrawer && (
                 <div
                     className="fixed inset-0 bg-black/40 bg-opacity-50 z-30"
-                    onClick={() => dispatch(closeUserDrawer())}
+                    onClick={() => {
+                        clearErrors();
+                        reset()
+                        dispatch(closeUserDrawer())
+                    }}
                 />
             )}
 
@@ -36,19 +74,31 @@ const MenuDrawer = () => {
                 <button
                     type="button"
                     className="absolute top-4.5 right-2.5 text-gray-500 hover:text-primary transition duration-300 hover:cursor-pointer px-2"
-                    onClick={() => dispatch(closeUserDrawer())}
+                    onClick={() => {
+                        clearErrors()
+                        reset()
+                        dispatch(closeUserDrawer())
+                    }}
                 >
                     <X className="w-5 h-5" />
                     <span className="sr-only">Close menu</span>
                 </button>
 
                 <div className="py-4 px-2">
-                    <form className="text-sm">
-                        <Input label="Email Address" placeholder="Email Address" />
-                        <Input label="Password" placeholder="Password" />
-                        <Button
+                    <form className="text-sm" onSubmit={handleSubmit(onSubmit)}>
+                        <div className="mb-4">
+                            <Input type="email" label="Email Address" placeholder="Email Address" {...register("identifier")} />
+                            <ErrorMessage msg={errors?.identifier?.message} />
+                        </div>
+
+                        <div className="mb-4">
+                            <Input type="password" label="Password" placeholder="Password" {...register("password")} />
+                            <ErrorMessage msg={errors?.password?.message} />
+                        </div>
+
+                        <Button type="submit" isLoading={loading}
                             className="w-full rounded-md text-white bg-primary border hover:bg-white hover:-translate-y-1 hover:border-primary hover:text-primary mb-4 text-sm">
-                            LOG IN
+                            {loading ? "LOGGING IN" : "LOG IN"}
                         </Button>
                     </form>
                     <div>
@@ -68,4 +118,4 @@ const MenuDrawer = () => {
     );
 };
 
-export default MenuDrawer;
+export default UserDrawer;

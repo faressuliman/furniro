@@ -8,9 +8,9 @@ interface IProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button = ({ children, className, isLoading, ...rest }: IProps) => {
   return (
-    <button className={`${className} py-2 px-6 cursor-pointer duration-300 font-bold flex items-center justify-center disabled:cursor-not-allowed disabled:hover:bg-[#284975] disabled:bg-[#284975]`} {...rest} disabled={isLoading}>
+    <button className={`${className} py-2 px-6 cursor-pointer duration-300 font-bold flex items-center justify-center disabled:cursor-not-allowed disabled:hover:opacity-80 disabled:bg-white disabled:text-primary`} {...rest} disabled={isLoading}>
       {isLoading ? <svg
-        className="mr-3 -ml-1 w-5 h-5 animate-spin text-white"
+        className="mr-3 -ml-1 w-5 h-5 animate-spin text-primary"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24">
