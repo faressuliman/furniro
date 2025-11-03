@@ -16,7 +16,7 @@ import { useEffect } from "react"
 const Register = () => {
 
   const dispatch = useDispatch<AppDispatch>();
-  const { loading, data, error } = useSelector(selectRegister)
+  const { loading, data } = useSelector(selectRegister)
   const navigate = useNavigate();
 
   // useForm
