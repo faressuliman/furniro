@@ -94,13 +94,16 @@ const Index = () => {
         </div>
       </section>
 
+
+
+
       {/* Featured Products Section */}
       <section className="mt-16 max-w-screen-3xl mx-auto p-4 lg:px-12">
         <h2 className="text-grey font-bold md:text-3xl text-2xl text-center mb-8">
           Featured Products
         </h2>
 
-        <div className="xl:container xl:mx-auto flex flex-col items-center space-y-8 max-w-screen-3xl justify-center md:grid md:grid-cols-2 md:justify-items-center md:items-start lg:grid lg:grid-cols-4 lg:gap-x-24 xl:gap-x-0 lg:justify-items-center lg:items-start xl:justify-items-center">
+        <div className="flex flex-col items-center space-y-8 max-w-screen-3xl justify-center md:grid md:grid-cols-2 md:justify-items-center lg:grid lg:grid-cols-4 lg:gap-x-24 xl:gap-x-0 lg:justify-items-center">
           {isLoading
             ? [...Array(4)].map((_, i) => <ProductCardSkeleton key={i} />)
             : data?.data?.slice(0, 4).map((product: IProduct) => (
@@ -113,6 +116,7 @@ const Index = () => {
               />
             ))}
         </div>
+
 
         <div className="flex justify-center mt-10">
           <Button className="w-56 text-center bg-white border text-primary border-primary hover:bg-primary hover:-translate-y-1 hover:text-white text-sm">

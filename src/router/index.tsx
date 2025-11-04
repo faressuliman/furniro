@@ -2,6 +2,7 @@ import { lazy } from "react";
 import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
 import Layout from "../layout/Layout";
 import Shop from "../pages/Shop";
+import CookieService from "../services/CookieService";
 
 const Home = lazy(() => import("../pages"));
 const About = lazy(() => import("../pages/About"));
@@ -9,6 +10,8 @@ const Contact = lazy(() => import("../pages/Contact"));
 const Login = lazy(() => import("../pages/Login"));
 const Register = lazy(() => import("../pages/Register"));
 const Wishlist = lazy(() => import("../pages/Wishlist"));
+
+const token = CookieService.get("jwt")
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -19,7 +22,7 @@ const router = createBrowserRouter(
       <Route path="contact" element={<Contact />} />
       <Route path="login" element={<Login />} />
       <Route path="register" element={<Register />} />
-      <Route path="wishlist" element={<Wishlist />} />
+      <Route path="wishlist" element={<Wishlist isAuthenticated={token}/>} />
     </Route>
   )
 );

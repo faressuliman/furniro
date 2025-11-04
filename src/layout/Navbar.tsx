@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { UserRound, Heart, ShoppingCart, Search, Menu } from "lucide-react";
 import { useDispatch } from "react-redux";
@@ -8,6 +8,7 @@ import { openUserDrawer } from "../app/features/userDrawerSlice"
 const Navbar = () => {
 
     const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     return (
         <nav className="bg-white shadow-xs">
@@ -102,10 +103,13 @@ const Navbar = () => {
                         </div>
 
                         <button className="hover:text-primary hover:cursor-pointer transition-colors"
-                            onClick={() => { dispatch(openUserDrawer()) }}>
+                            onClick={() => { 
+                                dispatch(openUserDrawer()) 
+                            }}>
                             <UserRound className="w-5 h-5" />
                         </button>
-                        <button className="hover:text-primary hover:cursor-pointer transition-colors">
+                        <button onClick={() => {navigate("/wishlist")}}
+                            className="hover:text-primary hover:cursor-pointer transition-colors">
                             <Heart className="w-5 h-5" />
                         </button>
                         <button className="hover:text-primary hover:cursor-pointer transition-colors relative">

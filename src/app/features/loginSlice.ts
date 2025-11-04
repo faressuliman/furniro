@@ -48,11 +48,6 @@ const loginSlice = createSlice({
                 state.loading = false;
                 state.data = action.payload;
                 state.error = null;
-                toast.success("Sucessfully logged in!", {
-                            position: "bottom-center",
-                            duration: 3000,
-                            style: { background: 'white', color: 'black' }
-                        })
                 const date = new Date();
                 const IN_DAYS = 3
                 const EXPIRES_IN_DAYS = 1000 * 60 * 60 * 24 * IN_DAYS

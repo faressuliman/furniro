@@ -1,13 +1,10 @@
-import { X, LogIn, UserPlus, Heart, LogOut } from "lucide-react";
+import { X } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import type { RootState } from "../app/store";
 import { useDispatch, useSelector } from "react-redux";
 import { closeSidebar } from "../app/features/menuDrawerSlice";
-import CookieService from "../services/CookieService";
 
 const MenuDrawer = () => {
-    // Token
-    const token = CookieService.get("jwt");
 
     // Redux state
     const dispatch = useDispatch();
@@ -17,11 +14,6 @@ const MenuDrawer = () => {
 
     const handleNavClick = () => {
         dispatch(closeSidebar());
-    };
-
-    const handleLogout = () => {
-        CookieService.remove("jwt");
-        window.location.reload();
     };
 
     return (
@@ -103,57 +95,6 @@ const MenuDrawer = () => {
                                 onClick={handleNavClick}
                             >
                                 Contact Us
-                            </NavLink>
-                        </li>
-                        <hr className="text-gray-200" />
-
-                        {token ? (
-                            <>
-                                <li>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="flex items-center gap-2 p-1 text-xs hover:text-gray-400 duration-300 transition-all hover:cursor-pointer"
-                                    >
-                                        <LogOut className="w-5 h-5 text-gray-700" />
-                                        <span>Log Out</span>
-                                    </button>
-                                </li>
-                            </>
-                        ) : (
-                            <>
-                                <li>
-                                    <NavLink
-                                        to="/login"
-                                        className="flex items-center gap-2 p-1 text-xs hover:text-gray-400 duration-300 transition-all"
-                                        onClick={handleNavClick}
-                                    >
-                                        <LogIn className="w-5 h-5 text-gray-700" />
-                                        <span>Sign In</span>
-                                    </NavLink>
-                                </li>
-                                <hr className="text-gray-200" />
-                                <li>
-                                    <NavLink
-                                        to="/register"
-                                        className="flex items-center gap-2 p-1 text-xs hover:text-gray-400 duration-300 transition-all"
-                                        onClick={handleNavClick}
-                                    >
-                                        <UserPlus className="w-5 h-5 text-gray-700" />
-                                        <span>Create an Account</span>
-                                    </NavLink>
-                                </li>
-                            </>
-                        )}
-
-                        <hr className="text-gray-200" />
-                        <li>
-                            <NavLink
-                                to="/wishlist"
-                                className="flex items-center gap-2 p-1 text-xs hover:text-gray-400 duration-300 transition-all"
-                                onClick={handleNavClick}
-                            >
-                                <Heart className="w-5 h-5 text-gray-700" />
-                                <span>My Wish List</span>
                             </NavLink>
                         </li>
                         <hr className="text-gray-200" />
