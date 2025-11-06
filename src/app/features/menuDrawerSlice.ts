@@ -9,7 +9,7 @@ const initialState: ISidebarState = {
     isOpenSidebar: false
 }
 
-const menuDrawer = createSlice({
+const menuDrawerSlice = createSlice({
     name: "menuDrawer",
     initialState,
     reducers: {
@@ -18,5 +18,5 @@ const menuDrawer = createSlice({
     }
 })
 
-export const { openSidebar, closeSidebar } = menuDrawer.actions
-export default menuDrawer.reducer
+export const { openSidebar, closeSidebar } = menuDrawerSlice.actions
+export default menuDrawerSlice.reducer

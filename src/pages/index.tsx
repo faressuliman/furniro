@@ -1,11 +1,6 @@
 import hero from "../assets/hero-bg.png";
 import Button from "../components/ui/Button";
 import { sectionsData } from "../data";
-import ProductCard from "../components/ui/ProductCard";
-import { IProduct } from "../interfaces";
-import { useQuery } from "@tanstack/react-query";
-import { fetchProducts } from "../lib/api";
-import ProductCardSkeleton from "../components/ui/ProductSkeleton";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import decoration1 from "../assets/decoration1.jpg";
@@ -25,10 +20,7 @@ const Index = () => {
     </div>
   ));
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["products"],
-    queryFn: fetchProducts,
-  });
+  
 
   const [current, setCurrent] = useState(0);
 
@@ -91,37 +83,6 @@ const Index = () => {
 
         <div className="flex xl:flex xl:flex-row flex-col space-y-8 max-w-screen-3xl justify-center lg:grid lg:grid-cols-3 lg:gap-x-8">
           {renderSectionsData}
-        </div>
-      </section>
-
-
-
-
-      {/* Featured Products Section */}
-      <section className="mt-16 max-w-screen-3xl mx-auto p-4 lg:px-12">
-        <h2 className="text-grey font-bold md:text-3xl text-2xl text-center mb-8">
-          Featured Products
-        </h2>
-
-        <div className="flex flex-col items-center space-y-8 max-w-screen-3xl justify-center md:grid md:grid-cols-2 md:justify-items-center lg:grid lg:grid-cols-4 lg:gap-x-24 xl:gap-x-0 lg:justify-items-center">
-          {isLoading
-            ? [...Array(4)].map((_, i) => <ProductCardSkeleton key={i} />)
-            : data?.data?.slice(0, 4).map((product: IProduct) => (
-              <ProductCard
-                key={product.id}
-                title={product.title}
-                subtitle={product.subtitle}
-                price={product.price}
-                thumbnail={product.thumbnail}
-              />
-            ))}
-        </div>
-
-
-        <div className="flex justify-center mt-10">
-          <Button className="w-56 text-center bg-white border text-primary border-primary hover:bg-primary hover:-translate-y-1 hover:text-white text-sm">
-            SHOP ALL
-          </Button>
         </div>
       </section>
 
