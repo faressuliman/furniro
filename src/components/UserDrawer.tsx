@@ -1,7 +1,6 @@
 import { X } from "lucide-react";
-import type { AppDispatch, RootState } from "../app/store";
 import { useDispatch, useSelector } from "react-redux";
-import { closeUserDrawer } from "../app/features/userDrawerSlice";
+import { closeUserDrawer, selectUser } from "../app/features/userDrawerSlice";
 import Input from "./ui/Input";
 import Button from "./ui/Button";
 import { NavLink } from "react-router-dom";
@@ -14,6 +13,7 @@ import { selectLogin, userLogin } from "../app/features/loginSlice";
 import CookieService from "../services/CookieService";
 import { fetchUser } from "../lib/api";
 import { useQuery } from "@tanstack/react-query";
+import { AppDispatch } from "../app/store";
 
 const UserDrawer = () => {
 
@@ -22,7 +22,7 @@ const UserDrawer = () => {
 
     // Redux state
     const dispatch = useDispatch<AppDispatch>();
-    const isOpenUserDrawer = useSelector((state: RootState) => state.userDrawer.isOpenUserDrawer);
+    const isOpenUserDrawer = useSelector(selectUser)
     const { loading } = useSelector(selectLogin)
 
     // useForm

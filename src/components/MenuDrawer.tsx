@@ -1,16 +1,13 @@
 import { X } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import type { RootState } from "../app/store";
 import { useDispatch, useSelector } from "react-redux";
-import { closeSidebar } from "../app/features/menuDrawerSlice";
+import { closeSidebar, selectMenu } from "../app/features/menuDrawerSlice";
 
 const MenuDrawer = () => {
 
     // Redux state
     const dispatch = useDispatch();
-    const isOpenSidebar = useSelector(
-        (state: RootState) => state.menuDrawer.isOpenSidebar
-    );
+    const isOpenSidebar = useSelector(selectMenu)
 
     const handleNavClick = () => {
         dispatch(closeSidebar());

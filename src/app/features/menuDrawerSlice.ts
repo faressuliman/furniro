@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../store";
 
 interface ISidebarState {
     isOpenSidebar: boolean
@@ -19,4 +20,5 @@ const menuDrawerSlice = createSlice({
 })
 
 export const { openSidebar, closeSidebar } = menuDrawerSlice.actions
+export const selectMenu = (state: RootState) => state.menuDrawer.isOpenSidebar
 export default menuDrawerSlice.reducer

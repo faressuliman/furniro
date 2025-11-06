@@ -53,6 +53,7 @@ const Register = () => {
     if (data?.jwt) {
       setTimeout(() => {
         navigate("/")
+        window.location.reload() 
       }, 3000);
     }
   }, [data, navigate])
