@@ -7,7 +7,7 @@ export interface IProduct {
     id: number,
     title: string,
     subtitle: string
-    description: string,
+    description?: string,
     price: number,
-    thumbnail: string
+    thumbnail: string,
 }

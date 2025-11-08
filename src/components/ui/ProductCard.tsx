@@ -1,8 +1,13 @@
 import { ShoppingCart, Heart } from "lucide-react";
 import { IProduct } from "../../interfaces";
 import Button from "./Button"
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../app/features/cartSlice";
+import { AppDispatch } from "../../app/store";
 
-const ProductCard = ({ title, subtitle, price, thumbnail }: Pick<IProduct, "title" | "subtitle" | "price" | "thumbnail">) => {
+const ProductCard = ({ id, title, subtitle, price, thumbnail }: Pick<IProduct, "id" | "title" | "subtitle" | "price" | "thumbnail">) => {
+
+  const dispatch = useDispatch<AppDispatch>()
 
   return (
     <div className="w-[190px] sm:w-[250px] rounded-md xl:w-[280px] bg-white border border-gray-200 shadow-md flex flex-col h-[400px]">
@@ -31,7 +36,9 @@ const ProductCard = ({ title, subtitle, price, thumbnail }: Pick<IProduct, "titl
           </span>
 
           <div className="flex items-center justify-center gap-2 w-full">
-            <Button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 sm:px-4 sm:py-2 text-white bg-primary border hover:bg-white hover:-translate-y-1 hover:border-primary hover:text-primary text-xs sm:text-sm font-medium rounded-md transition-all whitespace-nowrap">
+            <Button className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 sm:px-4 sm:py-2 text-white bg-primary border hover:bg-white hover:-translate-y-1 hover:border-primary hover:text-primary text-xs sm:text-sm font-medium rounded-md transition-all whitespace-nowrap"
+              onClick={() => { dispatch(addToCart({ id, title, subtitle, price, thumbnail })) }}
+            >
               <ShoppingCart size={16} />
               Add To Cart
             </Button>

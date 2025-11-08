@@ -23,6 +23,7 @@ const Shop = () => {
             ? [...Array(8)].map((_, i) => <ProductCardSkeleton key={i} />)
             : data?.data?.map((product: IProduct) => (
               <ProductCard
+                id={product.id}
                 key={product.id}
                 title={product.title}
                 subtitle={product.subtitle}

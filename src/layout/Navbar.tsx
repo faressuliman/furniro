@@ -1,15 +1,18 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { UserRound, Heart, ShoppingCart, Search, Menu } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { openSidebar } from "../app/features/menuDrawerSlice"
 import { openUserDrawer } from "../app/features/userDrawerSlice"
+import { AppDispatch } from "../app/store";
+import { openCartDrawer, selectCart } from "../app/features/cartSlice";
 
 const Navbar = () => {
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<AppDispatch>()
     const navigate = useNavigate()
-
+    const { count } = useSelector(selectCart)
+    
     return (
         <nav className="bg-white shadow-xs">
             <div className="mx-auto max-w-screen-3xl p-4 lg:px-12">
@@ -39,10 +42,11 @@ const Navbar = () => {
                             onClick={() => { dispatch(openUserDrawer()) }}>
                             <UserRound className="w-5 h-5" />
                         </button>
-                        <button className="hover:text-primary hover:cursor-pointer transition-colors relative text-gray-700">
+                        <button className="hover:text-primary hover:cursor-pointer transition-colors relative text-gray-700"
+                                onClick={() => { dispatch(openCartDrawer())} }>
                             <ShoppingCart className="w-5 h-5" />
                             <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full px-1.5">
-                                0
+                                {count}
                             </span>
                         </button>
                     </div>
@@ -103,19 +107,21 @@ const Navbar = () => {
                         </div>
 
                         <button className="hover:text-primary hover:cursor-pointer transition-colors"
-                            onClick={() => { 
-                                dispatch(openUserDrawer()) 
+                            onClick={() => {
+                                dispatch(openUserDrawer())
                             }}>
                             <UserRound className="w-5 h-5" />
                         </button>
-                        <button onClick={() => {navigate("/wishlist")}}
+                        <button onClick={() => { navigate("/wishlist") }}
                             className="hover:text-primary hover:cursor-pointer transition-colors">
                             <Heart className="w-5 h-5" />
                         </button>
-                        <button className="hover:text-primary hover:cursor-pointer transition-colors relative">
+                        <button
+                            onClick={() => dispatch(openCartDrawer())}
+                            className="hover:text-primary hover:cursor-pointer transition-colors relative">
                             <ShoppingCart className="w-5 h-5" />
                             <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full px-1.5">
-                                0
+                                {count}
                             </span>
                         </button>
                     </div>
