@@ -4,6 +4,7 @@ import userDrawerSlice from "./features/userDrawerSlice"
 import loginSlice from "./features/loginSlice"
 import registerSlice from "./features/registerSlice"
 import cartSlice from "./features/cartSlice"
+import wishlistSlice from "./features/wishlistSlice"
 
 export const store = configureStore({
     reducer: {
@@ -11,7 +12,8 @@ export const store = configureStore({
         userDrawer: userDrawerSlice,
         login: loginSlice,
         register: registerSlice,
-        cart: cartSlice
+        cart: cartSlice,
+        wishlist: wishlistSlice,
     }
 })
 

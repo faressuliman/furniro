@@ -43,9 +43,13 @@ const UserDrawer = () => {
         const result = await dispatch(userLogin(data))
         if (userLogin.fulfilled.match(result)) {
             dispatch(closeUserDrawer())
+            window.location.reload()
         }
 
-        window.location.reload()
+        if (userLogin.rejected.match(result)) {
+            console.log("Invalid login credentials")
+        }
+
 
         console.log(data)
     }
@@ -158,7 +162,7 @@ const UserDrawer = () => {
                                 <p className="text-gray-600 text-xs underline text-center mb-5">Forgot your password?</p>
                             </NavLink>
                             <NavLink to="/register">
-                                <Button onClick={() => dispatch(closeUserDrawer())}
+                                <Button onClick={() => {dispatch(closeUserDrawer()); clearErrors()}}
                                     className="w-full rounded-md bg-white border text-primary border-primary hover:bg-primary hover:-translate-y-1 hover:text-white text-sm">
                                     CREATE ACCOUNT
                                 </Button>

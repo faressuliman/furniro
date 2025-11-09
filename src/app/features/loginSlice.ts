@@ -58,8 +58,8 @@ const loginSlice = createSlice({
             .addCase(userLogin.rejected, (state, action) => {
                 state.loading = false;
                 state.data = null;
-                state.error = action.payload ?? "Unknown error";
-                toast.error(state.error || "Login failed", { 
+                state.error = action.payload ?? "Invalid login credentials";
+                toast.error(state.error || "Invalid login credentials", { 
                     position: "bottom-center", 
                     duration: 3000, 
                     style: { background: 'white', color: 'black' }
