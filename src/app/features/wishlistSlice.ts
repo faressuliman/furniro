@@ -4,14 +4,12 @@ import { RootState } from "../store";
 import toast from "react-hot-toast";
 
 
-interface IWishlistState {
+export interface IWishlistState {
     wishlistProducts: IProduct[],
-    count: number,
 }
 
 const initialState: IWishlistState = {
     wishlistProducts: [],
-    count: 0
 }
 
 const wishlistSlice = createSlice({
@@ -25,21 +23,20 @@ const wishlistSlice = createSlice({
 
             if (existingProduct) {
                 toast.error("Product already exists in your wishlist", {
-                    position: "bottom-center",
+                    position: "bottom-right",
                     duration: 3000,
-                    style: { background: 'white', color: 'black' }
+                    style: { background: 'white', color: 'black', textAlign: 'center' }
                 });
                 return;
             } 
             
             else {
                 state.wishlistProducts.push({ ...action.payload })
-                toast.success("Product has been added to your cart!", {
-                    position: "bottom-center",
+                toast.success("Product has been added to your wishlist!", {
+                    position: "bottom-right",
                     duration: 3000,
-                    style: { background: 'white', color: 'black' }
+                    style: { background: 'white', color: 'black', textAlign: 'center' }
                 });
-                state.count = state.wishlistProducts.length
             }
         },
 
@@ -47,7 +44,6 @@ const wishlistSlice = createSlice({
             state.wishlistProducts = state.wishlistProducts.filter(
                 (product) => product.id !== action.payload
             )
-            state.count = state.wishlistProducts.length
         },
     }
 })

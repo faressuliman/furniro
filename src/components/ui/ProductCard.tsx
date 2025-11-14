@@ -1,13 +1,18 @@
 import { ShoppingCart, Heart } from "lucide-react";
 import { IProduct } from "../../interfaces";
 import Button from "./Button"
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../app/features/cartSlice";
+import { addtoWishlist } from "../../app/features/wishlistSlice";
 import { AppDispatch } from "../../app/store";
+import { selectWishlist } from "../../app/features/wishlistSlice";
 
 const ProductCard = ({ id, title, subtitle, price, thumbnail }: Pick<IProduct, "id" | "title" | "subtitle" | "price" | "thumbnail">) => {
 
   const dispatch = useDispatch<AppDispatch>()
+  const { wishlistProducts } = useSelector(selectWishlist)
+
+  const isInWishList = wishlistProducts.some((product) => product.id === id)
 
   return (
     <div className="w-[190px] sm:w-[250px] rounded-md xl:w-[280px] bg-white border border-gray-200 shadow-md flex flex-col h-[400px]">
@@ -44,7 +49,8 @@ const ProductCard = ({ id, title, subtitle, price, thumbnail }: Pick<IProduct, "
             </Button>
 
 
-            <button className="p-2 border border-gray-300 rounded-lg hover:border-primary hover:cursor-pointer transition-colors">
+            <button onClick={() => { dispatch(addtoWishlist({ id, title, price, thumbnail })) }}
+              className={`p-2 border ${isInWishList ? "border-primary" : "border-gray-300"} rounded-lg hover:border-primary hover:cursor-pointer transition-colors`}>
               <Heart size={16} className="text-gray-700" />
             </button>
           </div>

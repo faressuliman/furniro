@@ -5,12 +5,13 @@ import { AppDispatch } from "../app/store";
 import { closeCartDrawer, selectCart, increaseQuantity, decreaseQuantity, ICartProduct, removeFromCart } from "../app/features/cartSlice";
 import Button from "./ui/Button";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const CartDrawer = () => {
 
     // Token
     const token = CookieService.get("jwt")
-    
+
     const navigate = useNavigate()
 
     // Redux state
@@ -19,8 +20,8 @@ const CartDrawer = () => {
 
     const renderCartProducts = cartProducts.map((product: ICartProduct) => (
         <div className="flex space-x-4 py-4 border-b border-gray-200" key={product.id}>
-            <div className="">
-                <img src={product.thumbnail} alt={product.title} className="w-24 h-24 object-cover bg-gray-200" />
+            <div>
+                <img src={product.thumbnail} alt={product.title} className="w-24 h-24 object-cover" />
             </div>
             <div className="flex flex-col">
                 <h5 className="font-bold uppercase tracking-wide text-xs mb-3">{product.title}</h5>
@@ -92,8 +93,18 @@ const CartDrawer = () => {
                             <div className="mt-3">
                                 <Button
                                     onClick={() => {
-                                        navigate("/checkout")
-                                        dispatch(closeCartDrawer())
+                                        if (token) {
+                                            navigate("/checkout")
+                                            dispatch(closeCartDrawer())
+                                        }
+
+                                        else {
+                                            toast.error("You are required to login first!", {
+                                                position: "bottom-center",
+                                                duration: 2000,
+                                                style: { background: 'white', color: 'black' }
+                                            });
+                                        }
                                     }}
                                     className="w-full rounded-md text-white bg-primary border hover:bg-white hover:-translate-y-1 hover:border-primary hover:text-primary mb-4 text-sm"
                                 >

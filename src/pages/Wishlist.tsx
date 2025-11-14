@@ -1,5 +1,12 @@
 import { Navigate } from "react-router-dom"
 import PageHeader from "../components/PageHeader"
+import { useDispatch, useSelector } from "react-redux"
+import { AppDispatch } from "../app/store"
+import { removeFromWishlist, selectWishlist } from "../app/features/wishlistSlice"
+import { IProduct } from "../interfaces"
+import Button from "../components/ui/Button"
+import { X } from "lucide-react"
+import { addToCart } from "../app/features/cartSlice"
 
 interface IProps {
   isAuthenticated: boolean
@@ -7,11 +14,77 @@ interface IProps {
 
 const Wishlist = ({ isAuthenticated }: IProps) => {
 
-  if (!isAuthenticated) return <Navigate to="/" replace />
+  const { wishlistProducts } = useSelector(selectWishlist)
+  if (!isAuthenticated || wishlistProducts.length == 0) return <Navigate to="/" replace />
+  const dispatch = useDispatch<AppDispatch>()
+
+  const renderWishlistProducts = wishlistProducts.map((product: IProduct, index: number) => (
+    <div key={product.id}>
+
+      <div className="grid grid-cols-3 md:grid-cols-4 gap-8 items-center justify-items-center py-3">
+
+        <div className="">
+          <img
+            src={product.thumbnail}
+            alt={product.title}
+            className="w-20 h-20 object-cover items-center"
+          />
+        </div>
+
+        <div className="hidden md:block">
+          {product.title}
+        </div>
+
+        <div>
+          ${product.price}
+        </div>
+
+        <div className="flex space-x-2">
+          <Button
+            className="flex items-center justify-center gap-1.5 px-3 py-1 text-primary text-nowrap bg-white border hover:border-white hover:text-white hover:bg-primary text-xs font-medium rounded-md transition-all"
+            onClick={() => {
+              dispatch(addToCart(product))
+            }}
+          >
+            Add To Cart
+          </Button>
+
+          <button
+            className="hover:cursor-pointer hover:text-grey transition duration-300"
+            onClick={() => { dispatch(removeFromWishlist(product.id)) }}
+          >
+            <X className="md:w-5 md:h-5 w-4 h-4" />
+          </button>
+        </div>
+
+      </div>
+
+      {index < wishlistProducts.length - 1 && (
+        <hr className="border-gray-300" />
+      )}
+    </div>
+  ))
 
   return (
     <div>
       <PageHeader title="Wishlist" />
+
+      <div className="mt-12 max-w-screen-3xl lg:container mx-auto p-4 lg:px-8">
+
+        <div className="grid grid-cols-3 md:grid-cols-4 gap-8 font-bold text-md justify-items-center mb-2">
+          <div>Product</div>
+          <div className="hidden md:block">Name</div>
+          <div>Price</div>
+          <div>Options</div>
+        </div>
+
+        <hr className="border-gray-300" />
+
+        <div className="flex flex-col gap-4">
+          {renderWishlistProducts}
+        </div>
+
+      </div>
     </div>
   )
 }

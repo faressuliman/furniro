@@ -34,7 +34,7 @@ const cartSlice = createSlice({
             if (existingProduct) {
                 existingProduct.quantity += 1
                 toast.success("Product already exists in your cart, quantity has increased.", {
-                    position: "bottom-center",
+                    position: "bottom-right",
                     duration: 3000,
                     style: { background: 'white', color: 'black' }
                 });
@@ -43,7 +43,7 @@ const cartSlice = createSlice({
             else {
                 state.cartProducts.push({ ...action.payload, quantity: 1 })
                 toast.success("Product has been added to your cart!", {
-                    position: "bottom-center",
+                    position: "bottom-right",
                     duration: 3000,
                     style: { background: 'white', color: 'black' }
                 });
