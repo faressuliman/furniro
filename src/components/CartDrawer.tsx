@@ -19,11 +19,11 @@ const CartDrawer = () => {
     const { isOpenCartDrawer, cartProducts, count } = useSelector(selectCart)
 
     const renderCartProducts = cartProducts.map((product: ICartProduct) => (
-        <div className="flex space-x-4 py-4 border-b border-gray-200" key={product.id}>
+        <div className="flex space-x-6 py-4 border-b border-gray-200" key={product.id}>
             <div>
-                <img src={product.thumbnail} alt={product.title} className="w-24 h-24 object-cover" />
+                <img src={product.thumbnail} alt={product.title} className="w-20 h-20 object-cover" />
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col w-full">
                 <h5 className="font-bold uppercase tracking-wide text-xs mb-3">{product.title}</h5>
                 <h5 className="uppercase tracking-wide text-xs text-gray-400 mb-3">${product.price}</h5>
                 <div className="flex justify-between items-center">

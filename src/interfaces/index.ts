@@ -6,8 +6,8 @@ export interface ISection {
 export interface IProduct {
     id: number,
     title: string,
-    subtitle?: string
     description?: string,
+    category?: string,
     price: number,
     thumbnail: string,
 }

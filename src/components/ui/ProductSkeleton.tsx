@@ -10,8 +10,8 @@ const ProductCardSkeleton = () => {
           {/* Title */}
           <div className="h-5 bg-gray-300 w-3/4 mb-3 rounded-md"></div>
 
-          {/* Subtitle */}
-          <div className="h-3 bg-gray-300 w-5/6 mb-6 rounded-md"></div>
+          {/* Category */}
+          <div className="h-3 bg-gray-300 w-24 mb-6 rounded-md"></div>
         </div>
 
         {/* Price & Buttons */}

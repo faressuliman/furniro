@@ -33,7 +33,7 @@ const cartSlice = createSlice({
 
             if (existingProduct) {
                 existingProduct.quantity += 1
-                toast.success("Product already exists in your cart, quantity has increased.", {
+                toast.success("Already in cart. Quantity updated.", {
                     position: "bottom-right",
                     duration: 3000,
                     style: { background: 'white', color: 'black' }
@@ -90,14 +90,9 @@ const cartSlice = createSlice({
             )
         },
 
-        clearCart: (state) => {
-            state.cartProducts = []
-            state.count = 0
-        }
-
     }
 })
 
-export const { openCartDrawer, closeCartDrawer, addToCart, removeFromCart, increaseQuantity, decreaseQuantity, clearCart } = cartSlice.actions
+export const { openCartDrawer, closeCartDrawer, addToCart, removeFromCart, increaseQuantity, decreaseQuantity } = cartSlice.actions
 export const selectCart = (state: RootState): ICartState => state.cart;
 export default cartSlice.reducer
