@@ -22,3 +22,8 @@ export const getProductById = async (id: string) => {
     const res = await axiosInstance.get(`/products/${id}`)
     return res.data
 }
+
+export const getProductsByCategory = async (category: string) => {
+    const res = await axiosInstance.get(`/products/category/${category}`)
+    return res.data.products
+}
