@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import menuDrawerSlice from "./features/menuDrawerSlice"
 import userDrawerSlice from "./features/userDrawerSlice"
+import categoryDrawerSlice from "./features/categoryDrawerSlice"
 import loginSlice from "./features/loginSlice"
 import registerSlice from "./features/registerSlice"
 import cartSlice from "./features/cartSlice"
@@ -27,6 +28,7 @@ export const store = configureStore({
     reducer: {
         menuDrawer: menuDrawerSlice,
         userDrawer: userDrawerSlice,
+        categoryDrawer: categoryDrawerSlice,
         login: loginSlice,
         register: registerSlice,
         cart: persistedCart,

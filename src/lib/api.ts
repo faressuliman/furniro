@@ -27,3 +27,8 @@ export const getProductsByCategory = async (category: string) => {
     const res = await axiosInstance.get(`/products/category/${category}`)
     return res.data.products
 }
+
+export const fetchCategories = async () => {
+    const res = await axiosInstance.get(`/products/category-list`)
+    return res.data
+}
