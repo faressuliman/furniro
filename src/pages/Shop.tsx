@@ -2,9 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import PageHeader from "../components/PageHeader";
 import ProductCard from "../components/ui/ProductCard";
 import ProductCardSkeleton from "../components/ui/ProductSkeleton";
+import SortDropdown from "../components/ui/SortDropdown";
+import Loader from "../components/ui/Loader";
 import { fetchCategories, fetchProducts, getProductsByCategory } from "../lib/api";
 import { IProduct } from "../interfaces";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import CategoryDrawer from "../components/CategoryDrawer";
 import { useDispatch } from "react-redux";
 import { openCategoryDrawer } from "../app/features/categoryDrawerSlice";
@@ -17,6 +19,9 @@ const Shop = () => {
 
   // State
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [sortOption, setSortOption] = useState("default");
+  const [isSorting, setIsSorting] = useState(false);
+  const prevSortOptionRef = useRef(sortOption);
 
   // Fetching products
   const { data, isLoading } = useQuery({
@@ -38,7 +43,38 @@ const Shop = () => {
   })
 
   // Displaying products
-  const displayedProducts = selectedCategory ? categoryProducts || [] : data?.products || [];
+  const rawProducts = selectedCategory ? categoryProducts || [] : data?.products || [];
+
+  // Sorting products
+  const displayedProducts = [...rawProducts].sort((a, b) => {
+    if (sortOption === "price-low") {
+      return a.price - b.price;
+    } else if (sortOption === "price-high") {
+      return b.price - a.price;
+    } else if (sortOption === "name-asc") {
+      return a.title.localeCompare(b.title);
+    } else if (sortOption === "name-desc") {
+      return b.title.localeCompare(a.title);
+    }
+    // Default: no sorting (original order)
+    return 0;
+  });
+
+  // Handle sorting loading state
+  useEffect(() => {
+    // Only show loader if sortOption actually changed (not on initial mount)
+    if (prevSortOptionRef.current !== sortOption && prevSortOptionRef.current !== undefined) {
+      setIsSorting(true);
+      const timer = setTimeout(() => {
+        setIsSorting(false);
+      }, 500); // Show loader for 500ms
+
+      prevSortOptionRef.current = sortOption;
+      return () => clearTimeout(timer);
+    } else {
+      prevSortOptionRef.current = sortOption;
+    }
+  }, [sortOption]);
 
   // Capitalize first letter
   const capitalizeFirstLetter = (str: string) => {
@@ -47,7 +83,7 @@ const Shop = () => {
 
   return (
     <div>
-      <PageHeader title="Shop" />
+      <PageHeader title="Shop" selectedCategory={selectedCategory} />
 
       {/* Category Drawer for Mobile/Tablet */}
       <CategoryDrawer 
@@ -74,7 +110,7 @@ const Shop = () => {
         <div className="flex gap-3 lg:gap-12">
           {/* Desktop Category Sidebar */}
           <div className="hidden lg:block w-80 h-fit px-4 py-6 border border-gray-300 rounded-lg shrink-0">
-            <h3 className="font-bold text-sm text-start mb-4">PRODUCT CATEGORIES</h3>
+            <h3 className="font-bold text-md text-start mb-4">PRODUCT CATEGORIES</h3>
             <div>
               {categoryLoading ? (
                 <ul className="space-y-4">
@@ -106,13 +142,23 @@ const Shop = () => {
 
           {/* Products Grid */}
           <div className="flex-1">
-            <h3 className="mb-6 font-bold text-xl md:text-2xl">
-              {selectedCategory ? capitalizeFirstLetter(selectedCategory) : "All Products"}
-            </h3>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 md:gap-8 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-8 xl:grid-cols-3 xl:gap-y-8 2xl:grid-cols-5">
-              {isLoading || categoryProductsLoading
-                ? [...Array(12)].map((_, i) => <ProductCardSkeleton key={i} />)
-                : displayedProducts.map((product: IProduct) => (
+            <div className="mb-6 flex items-center">
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-semibold text-gray-800 uppercase tracking-wide">Sort by</span>
+                <SortDropdown value={sortOption} onChange={setSortOption} />
+              </div>
+            </div>
+            {isLoading || categoryProductsLoading ? (
+              <div className="products-grid grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 md:gap-8 lg:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] lg:gap-x-5 lg:gap-y-8 xl:gap-y-8">
+                {[...Array(12)].map((_, i) => <ProductCardSkeleton key={i} />)}
+              </div>
+            ) : isSorting ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader />
+              </div>
+            ) : (
+              <div className="products-grid grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 md:gap-8 lg:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] lg:gap-x-5 lg:gap-y-8 xl:gap-y-8">
+                {displayedProducts.map((product: IProduct) => (
                   <ProductCard
                     id={product.id}
                     key={product.id}
@@ -122,7 +168,8 @@ const Shop = () => {
                     thumbnail={product.thumbnail}
                   />
                 ))}
-            </div>
+              </div>
+            )}
           </div>
         </div>
 
