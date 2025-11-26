@@ -17,7 +17,7 @@ const ProductCard = ({ id, title, category, price, thumbnail,}: IProduct) => {
   const isInWishList = wishlistProducts.some((product) => product.id === id)
 
   return (
-    <div className="w-[160px] sm:w-[220px] md:w-[220px] rounded-md xl:w-[280px] bg-[#F4F5F7] border border-gray-200 shadow-md flex flex-col h-[320px] sm:h-[370px] hover:-translate-y-1 transition-all duration-200">
+    <div className="w-[160px] sm:w-[220px] md:w-[220px] rounded-md xl:w-[280px] bg-[#f8f8f8] shadow-md flex flex-col h-[320px] sm:h-[370px] hover:-translate-y-1 transition-all duration-200">
       <div className="hover:cursor-pointer hover:opacity-85 transition duration-300 flex-1 flex flex-col" onClick={() => navigate(`/product/${id}`)}>
         {/* Product Image */}
         <img

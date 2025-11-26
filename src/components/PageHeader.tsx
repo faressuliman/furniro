@@ -3,16 +3,10 @@ import background from "../assets/background.png"
 
 interface IProps {
     title: string
-    selectedCategory?: string
 }
 
-const PageHeader = ({ title, selectedCategory }: IProps) => {
-    const capitalizeFirstLetter = (str: string) => {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    };
-
-    const breadcrumbText = selectedCategory ? capitalizeFirstLetter(selectedCategory) : title;
-
+const PageHeader = ({ title }: IProps) => {
+    
     return (
         <section className="relative w-full h-[316px] flex items-center justify-center">
             <img src={background} className="absolute inset-0 w-full h-full object-cover brightness-90" />
@@ -23,7 +17,7 @@ const PageHeader = ({ title, selectedCategory }: IProps) => {
 
                 {/* Breadcrumb */}
                 <div className="text-sm text-gray-700 mt-2">
-                    <NavLink to="/"><span className="font-bold hover:underline hover:cursor-pointer">Home</span></NavLink> <span className="mx-2">{'>'}</span> <span>{breadcrumbText}</span>
+                    <NavLink to="/"><span className="font-bold hover:underline hover:cursor-pointer">Home</span></NavLink> <span className="mx-2">{'>'}</span> <span>{title}</span>
                 </div>
             </div>
         </section>

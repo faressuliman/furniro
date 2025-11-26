@@ -1,23 +1,22 @@
 import { useState, useRef, useEffect } from "react";
 
 interface IProps {
-  value: string;
-  onChange: (value: string) => void;
+  value: number;
+  onChange: (value: number) => void;
 }
 
-const SortDropdown = ({ value, onChange }: IProps) => {
+const PageSizeDropdown = ({ value, onChange }: IProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const options = [
-    { value: "default", label: "Default Sorting" },
-    { value: "price-low", label: "Price: Low To High" },
-    { value: "price-high", label: "Price: High To Low" },
-    { value: "name-asc", label: "Alphabetically: A to Z" },
-    { value: "name-desc", label: "Alphabetically: Z to A" },
+    { value: 8, label: "8" },
+    { value: 16, label: "16" },
+    { value: 24, label: "24" },
+    { value: 32, label: "32" },
   ];
 
-  const selectedOption = options.find((opt) => opt.value === value) || options[0];
+  const selectedOption = options.find((opt) => opt.value === value) || options[1];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -35,9 +34,9 @@ const SortDropdown = ({ value, onChange }: IProps) => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="appearance-none px-5 py-2.5 pr-3 border border-gray-300 rounded-md bg-white text-xs font-medium text-gray-800 hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md min-w-[175px] text-left flex items-center justify-between"
+        className="appearance-none px-5 py-2.5 pr-3 border border-gray-300 rounded-md bg-white text-xs font-medium text-gray-800 hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md min-w-[140px] text-left flex items-center justify-between gap-2"
       >
-        <span>{selectedOption.label}</span>
+        <span>{selectedOption.label} per page</span>
         <svg
           className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
           fill="none"
@@ -65,7 +64,7 @@ const SortDropdown = ({ value, onChange }: IProps) => {
                       : "text-gray-800 hover:text-gray-400"
                   }`}
                 >
-                  {option.label}
+                  {option.label} per page
                 </button>
               </li>
             ))}
@@ -76,5 +75,5 @@ const SortDropdown = ({ value, onChange }: IProps) => {
   );
 };
 
-export default SortDropdown;
+export default PageSizeDropdown;
 
