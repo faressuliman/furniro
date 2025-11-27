@@ -104,6 +104,16 @@ const Shop = () => {
     setCurrentPage(1);
   }, [sortOption, selectedCategory, pageSize]);
 
+  // Scroll back up to products section on changing page/sort by/category/page size
+  const productsSectionRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const scrollThreshold = 300
+    if (window.scrollY > scrollThreshold) {
+      productsSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+
+  }, [sortOption, selectedCategory, pageSize, currentPage])
+
   // Handle page change loading state
   useEffect(() => {
     if (prevPageRef.current !== currentPage && prevPageRef.current !== undefined) {
@@ -158,7 +168,7 @@ const Shop = () => {
       />
 
       {/* Products Section */}
-      <section className="mt-8 max-w-screen-3xl mx-auto p-4 px-6 lg:px-8">
+      <section ref={productsSectionRef} className="mt-8 max-w-screen-3xl mx-auto p-4 px-6 lg:px-8">
 
         <div className="flex gap-3 lg:gap-12">
           {/* Desktop Category Sidebar */}
@@ -232,7 +242,7 @@ const Shop = () => {
                 {[...Array(12)].map((_, i) => <ProductCardSkeleton key={i} />)}
               </div>
             ) : isSorting || isChangingPage ? (
-              <div className="flex items-center justify-center py-12">
+              <div className="lg:w-11/12 w-full lg:border lg:border-gray-200 lg:rounded-lg lg:p-8 min-h-[480px] flex items-center justify-center">
                 <Loader />
               </div>
             ) : (
@@ -251,7 +261,7 @@ const Shop = () => {
             )}
           </div>
         </div>
-          <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+        <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
       </section>
     </div>
