@@ -1,7 +1,11 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
-const ScrollToTopWrapper = ({ children }: { children: React.ReactNode }) => {
+interface IProps {
+  children: React.ReactNode;
+}
+
+const ScrollToTopWrapper = ({ children }: IProps) => {
   const { pathname } = useLocation();
 
   useEffect(() => {

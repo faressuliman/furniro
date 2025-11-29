@@ -5,20 +5,22 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { registerSchema } from "../validation";
 import * as z from "zod"
 import ErrorMessage from "../components/ui/ErrorMessage";
-import { useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch } from "../app/store"
 import { selectRegister, userRegister } from "../app/features/registerSlice"
 import { useEffect } from "react"
 import PageHeader from "../components/PageHeader";
 import registerBg from "../assets/register-bg.png";
+import { selectCart, syncCartToSupabase } from "../app/features/cartSlice";
+import { selectWishlist, syncWishlistToSupabase } from "../app/features/wishlistSlice";
 
 
 const Register = () => {
 
   const dispatch = useDispatch<AppDispatch>();
   const { loading, data } = useSelector(selectRegister)
-  const navigate = useNavigate();
+  const { cartProducts } = useSelector(selectCart)
+  const { wishlistProducts } = useSelector(selectWishlist)
 
   // useForm
   type IRegisterInput = z.infer<typeof registerSchema>;
@@ -36,7 +38,7 @@ const Register = () => {
     
     const payload = {
       username: `${data.first_name} ${data.last_name}`,
-      email: data.identifier,
+      email: data.email,
       password: data.password,
     };
 
@@ -45,18 +47,27 @@ const Register = () => {
       setTimeout(() => reset(), 3000);
     }
 
-    console.log("test")
-
   }
 
   useEffect(() => {
-    if (data?.jwt) {
-      setTimeout(() => {
-        navigate("/")
-        window.location.reload() 
-      }, 3000);
+    if (data?.session) {
+      // Sync guest cart/wishlist to Supabase after registration
+      const syncData = async () => {
+        if (cartProducts.length > 0) {
+          await dispatch(syncCartToSupabase({ userId: data.session.user.id, cartProducts }))
+        }
+        if (wishlistProducts.length > 0) {
+          await dispatch(syncWishlistToSupabase({ userId: data.session.user.id, wishlistProducts }))
+        }
+      }
+      
+      syncData().then(() => {
+        setTimeout(() => {
+          window.location.href = "/"; 
+        }, 3000);
+      })
     }
-  }, [data, navigate])
+  }, [data, dispatch, cartProducts, wishlistProducts])
 
   return (
     <div>
@@ -83,8 +94,8 @@ const Register = () => {
               <ErrorMessage msg={errors?.last_name?.message} />
             </div>
             <div>
-              <Input label="Your Email Address" className="w-full" {...register("identifier")} />
-              <ErrorMessage msg={errors?.identifier?.message} />
+              <Input label="Your Email Address" className="w-full" {...register("email")} />
+              <ErrorMessage msg={errors?.email?.message} />
             </div>
             <div>
               <Input label="Your Password" type="password" className="w-full" {...register("password")} />

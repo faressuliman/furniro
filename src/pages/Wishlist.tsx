@@ -7,16 +7,38 @@ import { IProduct } from "../interfaces"
 import Button from "../components/ui/Button"
 import { X } from "lucide-react"
 import { addToCart } from "../app/features/cartSlice"
+import { useEffect, useState } from "react"
+import { supabase } from "../lib/supabaseClient"
+import { Session } from "@supabase/supabase-js"
+import Loader from "../components/ui/Loader"
 
-interface IProps {
-  isAuthenticated: boolean
-}
+const Wishlist = () => {
 
-const Wishlist = ({ isAuthenticated }: IProps) => {
-
+  // States
+  const [session, setSession] = useState<Session | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const { wishlistProducts } = useSelector(selectWishlist)
-  if (!isAuthenticated || wishlistProducts.length == 0) return <Navigate to="/" replace />
   const dispatch = useDispatch<AppDispatch>()
+
+  // Get current session on mount
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+      setIsLoading(false)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  // Show loading state while checking session
+  if (isLoading) return <div className="flex items-center justify-center min-h-screen"><Loader /></div>
+
+  // Redirect if not authenticated or wishlist is empty
+  if (!session || wishlistProducts.length === 0) return <Navigate to="/" replace />
 
   const renderWishlistProducts = wishlistProducts.map((product: IProduct, index: number) => (
     <div key={product.id}>

@@ -10,20 +10,60 @@ import { loginSchema } from "../validation";
 import * as z from "zod"
 import ErrorMessage from "./ui/ErrorMessage";
 import { selectLogin, userLogin } from "../app/features/loginSlice";
-import CookieService from "../services/CookieService";
 import { fetchUser } from "../lib/api";
 import { useQuery } from "@tanstack/react-query";
-import { AppDispatch } from "../app/store";
+import { AppDispatch, RootState } from "../app/store";
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabaseClient";
+import { Session } from "@supabase/supabase-js";
+import Loader from "./ui/Loader";
+import { syncCartToSupabase, clearLocalCart } from "../app/features/cartSlice";
+import { syncWishlistToSupabase, clearLocalWishlist } from "../app/features/wishlistSlice";
 
 const UserDrawer = () => {
 
-    // Token
-    const token = CookieService.get("jwt")
+    // Supabase session
+    const [session, setSession] = useState<Session | null>(null)
+    const [isLoggingOut, setIsLoggingOut] = useState(false)
+    const [isLoggingIn, setIsLoggingIn] = useState(false)
 
     // Redux state
     const dispatch = useDispatch<AppDispatch>();
     const isOpenUserDrawer = useSelector(selectUser)
     const { loading } = useSelector(selectLogin)
+    const { cartProducts } = useSelector((state: RootState) => state.cart)
+    const { wishlistProducts } = useSelector((state: RootState) => state.wishlist)
+
+    // Get current session on mount and listen for auth changes
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setSession(session)
+        })
+
+        const { data: { subscription },} = supabase.auth.onAuthStateChange(async (_event, session) => {
+            setSession(session)
+            
+            // User logged in - sync guest cart/wishlist to Supabase
+            if (session && isLoggingIn) {
+                if (cartProducts.length > 0) {
+                    await dispatch(syncCartToSupabase({ userId: session.user.id, cartProducts }))
+                }
+                if (wishlistProducts.length > 0) {
+                    await dispatch(syncWishlistToSupabase({ userId: session.user.id, wishlistProducts }))
+                }
+                setIsLoggingIn(false)
+            }
+            
+            // User logged out - clear local state
+            if (!session && isLoggingOut) {
+                dispatch(clearLocalCart())
+                dispatch(clearLocalWishlist())
+                setIsLoggingOut(false)
+            }
+        })
+
+        return () => subscription.unsubscribe()
+    }, [isLoggingOut, isLoggingIn, dispatch, cartProducts, wishlistProducts])
 
     // useForm
     type ILoginInput = z.infer<typeof loginSchema>;
@@ -39,26 +79,19 @@ const UserDrawer = () => {
 
     // Form submission handler
     const onSubmit: SubmitHandler<ILoginInput> = async (data) => {
-
+        setIsLoggingIn(true)
         const result = await dispatch(userLogin(data))
-        if (userLogin.fulfilled.match(result)) {
-            dispatch(closeUserDrawer())
-            window.location.reload()
-        }
 
         if (userLogin.rejected.match(result)) {
-            console.log("Invalid login credentials")
+            setIsLoggingIn(false)
         }
-
-
-        console.log(data)
     }
 
     // Fetching user's username
     const { data: userData } = useQuery({
         queryFn: fetchUser,
         queryKey: ["user"],
-        enabled: !!token // only runs when token exists
+        enabled: !!session // Only fetch when session exists
     })
 
     return (
@@ -84,7 +117,7 @@ const UserDrawer = () => {
                 aria-labelledby="drawer-backdrop-label"
             >
                 <h5 id="drawer-backdrop-label" className="text-base font-bold mb-4 px-2">
-                    {token ? `Hi, ${userData?.username}` : "LOGIN"}
+                    {session ? `Hi, ${userData?.user_metadata?.username || 'User'}` : "LOGIN"}
                 </h5>
 
                 {/* Close button */}
@@ -101,7 +134,11 @@ const UserDrawer = () => {
                     <span className="sr-only">Close menu</span>
                 </button>
 
-                {token ? (
+                {isLoggingOut || isLoggingIn ? (
+                    <div className="flex items-center justify-center h-60">
+                        <Loader />
+                    </div>
+                ) : session ? (
                     <div className="py-4">
                         <ul className="space-y-2 font-semibold text-gray-800 text-xs">
                             <li>
@@ -127,9 +164,9 @@ const UserDrawer = () => {
 
                             <li>
                                 <button
-                                    onClick={() => {
-                                        CookieService.remove("jwt")
-                                        window.location.reload()
+                                    onClick={async () => {
+                                        setIsLoggingOut(true)
+                                        await supabase.auth.signOut()
                                     }}
                                     className="p-1 hover:cursor-pointer hover:text-gray-400 duration-300 transition-all"
                                 >
@@ -143,8 +180,8 @@ const UserDrawer = () => {
                     <div className="py-4 px-2">
                         <form className="text-sm" onSubmit={handleSubmit(onSubmit)}>
                             <div className="mb-4">
-                                <Input type="email" label="Email Address" placeholder="Email Address" {...register("identifier")} />
-                                <ErrorMessage msg={errors?.identifier?.message} />
+                                <Input type="email" label="Email Address" placeholder="Email Address" {...register("email")} />
+                                <ErrorMessage msg={errors?.email?.message} />
                             </div>
 
                             <div className="mb-4">

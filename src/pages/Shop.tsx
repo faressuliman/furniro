@@ -261,9 +261,13 @@ const Shop = () => {
             )}
           </div>
         </div>
-        <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
+        {/* Paginator */}
+        <div className="mb-4">
+          <Paginator currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+        </div>
       </section>
+
     </div>
   );
 };

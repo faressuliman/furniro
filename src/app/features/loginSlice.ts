@@ -1,10 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axiosInstance from "../../lib/axios";
 import { z } from "zod";
 import { loginSchema } from "../../validation";
-import CookieService from "../../services/CookieService";
 import { RootState } from "../store";
 import toast from "react-hot-toast";
+import { supabase } from "../../lib/supabaseClient";
 
 export type IUserLoginData = z.infer<typeof loginSchema>;
 
@@ -24,13 +23,20 @@ export const userLogin = createAsyncThunk<any, IUserLoginData, { rejectValue: st
     const { rejectWithValue } = thunkAPI
 
     try {
-        const res = await axiosInstance.post("/api/auth/local", userData)
-        return res.data
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: userData.email,
+            password: userData.password
+        })
+
+        if (error) {
+            return rejectWithValue(error.message)
+        }
+
+        return data
     }
 
     catch (error: any) {
-        const msg = error?.response?.data?.error?.message
-        return (rejectWithValue(msg))
+        return rejectWithValue(error?.message || "Something went wrong")
     }
 })
 
@@ -46,14 +52,8 @@ const loginSlice = createSlice({
             })
             .addCase(userLogin.fulfilled, (state, action) => {
                 state.loading = false;
-                state.data = action.payload;
+                state.data = action.payload?.user ?? null;
                 state.error = null;
-                const date = new Date();
-                const IN_DAYS = 3
-                const EXPIRES_IN_DAYS = 1000 * 60 * 60 * 24 * IN_DAYS
-                date.setTime(date.getTime() + EXPIRES_IN_DAYS);
-                const options =  { path: "/", expires: date };
-                CookieService.set("jwt", action.payload.jwt, options)
             })
             .addCase(userLogin.rejected, (state, action) => {
                 state.loading = false;
