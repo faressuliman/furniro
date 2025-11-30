@@ -1,22 +1,33 @@
 import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import CookieService from "../services/CookieService";
 import { AppDispatch } from "../app/store";
-import { closeCartDrawer, selectCart, increaseQuantity, decreaseQuantity, ICartProduct, removeFromCart } from "../app/features/cartSlice";
+import { closeCartDrawer, selectCart, increaseQuantity, decreaseQuantity, ICartProduct, removeFromCart, increaseQuantityAsync, decreaseQuantityAsync, removeFromCartAsync } from "../app/features/cartSlice";
 import Button from "./ui/Button";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabaseClient";
+import { Session } from "@supabase/supabase-js";
 
 const CartDrawer = () => {
 
-    // Token
-    const token = CookieService.get("jwt")
-
     const navigate = useNavigate()
-
-    // Redux state
     const dispatch = useDispatch<AppDispatch>();
     const { isOpenCartDrawer, cartProducts, count } = useSelector(selectCart)
+    const [session, setSession] = useState<Session | null>(null)
+    const [loadingProductId, setLoadingProductId] = useState<number | null>(null)
+
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setSession(session)
+        })
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session)
+        })
+
+        return () => subscription.unsubscribe()
+    }, [])
 
     const renderCartProducts = cartProducts.map((product: ICartProduct) => (
         <div className="flex space-x-6 py-4 border-b border-gray-200" key={product.id}>
@@ -28,13 +39,54 @@ const CartDrawer = () => {
                 <h5 className="uppercase tracking-wide text-xs text-gray-400 mb-3">${product.price}</h5>
                 <div className="flex justify-between items-center">
                     <div className="flex items-center border border-gray-300 rounded-md w-20 justify-between">
-                        <button className="px-3 py-1 text-lg hover:cursor-pointer text-md text-gray-800" onClick={() => { dispatch(decreaseQuantity(product.id)) }}>-</button>
+                        <button 
+                            className="px-3 py-1 text-lg hover:cursor-pointer text-md text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed" 
+                            disabled={loadingProductId === product.id}
+                            onClick={async () => {
+                                if (session) {
+                                    setLoadingProductId(product.id)
+                                    await dispatch(decreaseQuantityAsync({ userId: session.user.id, productId: product.id, currentQuantity: product.quantity }))
+                                    setLoadingProductId(null)
+                                } else {
+                                    dispatch(decreaseQuantity(product.id))
+                                }
+                            }}>
+                            {loadingProductId === product.id ? '...' : '-'}
+                        </button>
                         <span className="text-center w-6 text-xs text-gray-800">{product.quantity}</span>
-                        <button className="px-3 py-1 text-lg hover:cursor-pointer text-md text-gray-800" onClick={() => { dispatch(increaseQuantity(product.id)) }}>+</button>
+                        <button 
+                            className="px-3 py-1 text-lg hover:cursor-pointer text-md text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed" 
+                            disabled={loadingProductId === product.id}
+                            onClick={async () => {
+                                if (session) {
+                                    setLoadingProductId(product.id)
+                                    await dispatch(increaseQuantityAsync({ userId: session.user.id, productId: product.id, currentQuantity: product.quantity }))
+                                    setLoadingProductId(null)
+                                } else {
+                                    dispatch(increaseQuantity(product.id))
+                                }
+                            }}>
+                            {loadingProductId === product.id ? '...' : '+'}
+                        </button>
                     </div>
                     <div className="">
-                        <button className="hover:cursor-pointer" onClick={() => { dispatch(removeFromCart(product.id)) }}>
-                            <X className="w-5 h-5" />
+                        <button 
+                            className="hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" 
+                            disabled={loadingProductId === product.id}
+                            onClick={async () => {
+                                if (session) {
+                                    setLoadingProductId(product.id)
+                                    await dispatch(removeFromCartAsync({ userId: session.user.id, productId: product.id }))
+                                    setLoadingProductId(null)
+                                } else {
+                                    dispatch(removeFromCart(product.id))
+                                }
+                            }}>
+                            {loadingProductId === product.id ? (
+                                <div className="animate-spin w-5 h-5 border-2 border-gray-300 border-t-primary rounded-full"></div>
+                            ) : (
+                                <X className="w-5 h-5 hover:text-gray-400 transition-all duration-200" />
+                            )}
                         </button>
                     </div>
                 </div>
@@ -93,7 +145,7 @@ const CartDrawer = () => {
                             <div className="mt-3">
                                 <Button
                                     onClick={() => {
-                                        if (token) {
+                                        if (session) {
                                             navigate("/checkout")
                                             dispatch(closeCartDrawer())
                                         }

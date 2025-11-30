@@ -103,3 +103,52 @@ export const removeFromWishlistDB = async (id: number) => {
     
     if (error) throw error
 }
+
+// Helper functions
+
+export const hydrateCart = async (cartItems: any[]) => {
+    const promises = cartItems.map(async (item) => {
+        const product = await getProductById(item.product_id.toString())
+        return {
+            ...product,
+            quantity: item.quantity,
+            cartItemId: item.id // Store the Supabase row ID
+        }
+    })
+    return await Promise.all(promises)
+}
+
+export const hydrateWishlist = async (wishlistItems: any[]) => {
+    const promises = wishlistItems.map(async (item) => {
+        const product = await getProductById(item.product_id.toString())
+        return {
+            ...product,
+            wishlistItemId: item.id // Store the Supabase row ID
+        }
+    })
+    return await Promise.all(promises)
+}
+
+export const checkProductInCartDB = async (userId: string, productId: number) => {
+    const { data, error } = await supabase
+        .from('cart_items')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('product_id', productId)
+        .single()
+    
+    if (error && error.code !== 'PGRST116') throw error
+    return data
+}
+
+export const checkProductInWishlistDB = async (userId: string, productId: number) => {
+    const { data, error } = await supabase
+        .from('wishlist_items')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('product_id', productId)
+        .single()
+    
+    if (error && error.code !== 'PGRST116') throw error
+    return data
+}

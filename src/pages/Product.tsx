@@ -2,20 +2,38 @@ import { useQuery } from "@tanstack/react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import { getProductById, getProductsByCategory } from "../lib/api"
 import Button from "../components/ui/Button"
-import { addToCart } from "../app/features/cartSlice"
+import { addToCart, addToCartAsync } from "../app/features/cartSlice"
 import { useDispatch, useSelector } from "react-redux"
 import { Heart, ShoppingCart, Undo2 } from "lucide-react"
-import { selectWishlist, toggleWishlist } from "../app/features/wishlistSlice"
+import { selectWishlist, toggleWishlist, toggleWishlistAsync } from "../app/features/wishlistSlice"
 import { AppDispatch } from "../app/store"
 import ProductDetailsSkeleton from "../components/ui/ProductDetailsSkeleton"
 import { IProduct } from "../interfaces"
 import ProductCard from "../components/ui/ProductCard"
 import ProductCardSkeleton from "../components/ui/ProductSkeleton"
+import { useEffect, useState } from "react"
+import { supabase } from "../lib/supabaseClient"
+import { Session } from "@supabase/supabase-js"
 
 const Product = () => {
 
   const dispatch = useDispatch<AppDispatch>()
   const { id } = useParams()
+  const [session, setSession] = useState<Session | null>(null)
+  const [isAddingToCart, setIsAddingToCart] = useState(false)
+  const [isTogglingWishlist, setIsTogglingWishlist] = useState(false)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   // Fetching product details
   const { data, isLoading } = useQuery({
@@ -68,17 +86,48 @@ const Product = () => {
                 <h3 className="font-bold text:sm md:text-md">${price}</h3>
                 <div className="text-xs">
                   <div className="flex items-center gap-2 w-full">
-                    <Button className="flex items-center w-56 gap-1.5 px-3 py-2 sm:px-4 sm:py-2 text-white bg-primary border hover:bg-white hover:border-primary hover:text-primary text-xs sm:text-sm font-medium rounded-md transition-all whitespace-nowrap"
-                      onClick={() => { dispatch(addToCart({ id: numericId, title, price, thumbnail })) }}
+                    <Button 
+                      className="flex items-center w-56 gap-1.5 px-3 py-2 sm:px-4 sm:py-2 text-white bg-primary border hover:bg-white hover:border-primary hover:text-primary text-xs sm:text-sm font-medium rounded-md transition-all whitespace-nowrap"
+                      onClick={async () => {
+                        const product = { id: numericId, title, price, thumbnail }
+                        if (session) {
+                          setIsAddingToCart(true)
+                          await dispatch(addToCartAsync({ userId: session.user.id, product }))
+                          setIsAddingToCart(false)
+                        } else {
+                          dispatch(addToCart(product))
+                        }
+                      }}
+                      isLoading={isAddingToCart}
                     >
-                      <ShoppingCart size={16} />
-                      Add To Cart
+                      {!isAddingToCart && <ShoppingCart size={16} />}
+                      {isAddingToCart ? "Adding To Cart" : "Add To Cart"}
                     </Button>
 
 
-                    <button onClick={() => { dispatch(toggleWishlist({ id: numericId, title, price, thumbnail })) }}
-                      className={`p-2 border ${isInWishList ? "border-primary" : "border-gray-300"} rounded-lg hover:border-primary hover:cursor-pointer transition-colors`}>
-                      <Heart size={16} className="text-gray-700" />
+                    <button
+                      onClick={async () => {
+                        const product = { id: numericId, title, price, thumbnail }
+                        if (session) {
+                          setIsTogglingWishlist(true)
+                          await dispatch(toggleWishlistAsync({ userId: session.user.id, product }))
+                          setIsTogglingWishlist(false)
+                        } else {
+                          dispatch(toggleWishlist(product))
+                        }
+                      }}
+                      disabled={isTogglingWishlist}
+                      className="p-2.5 bg-transparent hover:cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed group focus:outline-none border-none">
+                      {isTogglingWishlist ? (
+                        <div className="animate-spin w-5 h-5 border-2 border-gray-300 border-t-primary rounded-full"></div>
+                      ) : (
+                        <Heart
+                          size={24}
+                          className={`transition-colors ${
+                            isInWishList ? "fill-primary text-primary" : "text-gray-700 group-hover:text-primary"
+                          }`}
+                        />
+                      )}
                     </button>
                   </div>
                 </div>

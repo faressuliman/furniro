@@ -2,11 +2,11 @@ import { Navigate } from "react-router-dom"
 import PageHeader from "../components/PageHeader"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch } from "../app/store"
-import { removeFromWishlist, selectWishlist } from "../app/features/wishlistSlice"
+import { removeFromWishlist, selectWishlist, removeFromWishlistAsync } from "../app/features/wishlistSlice"
 import { IProduct } from "../interfaces"
 import Button from "../components/ui/Button"
-import { X } from "lucide-react"
-import { addToCart } from "../app/features/cartSlice"
+import { X, ShoppingCart } from "lucide-react"
+import { addToCart, addToCartAsync } from "../app/features/cartSlice"
 import { useEffect, useState } from "react"
 import { supabase } from "../lib/supabaseClient"
 import { Session } from "@supabase/supabase-js"
@@ -17,6 +17,8 @@ const Wishlist = () => {
   // States
   const [session, setSession] = useState<Session | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [addingToCartId, setAddingToCartId] = useState<number | null>(null)
+  const [removingId, setRemovingId] = useState<number | null>(null)
   const { wishlistProducts } = useSelector(selectWishlist)
   const dispatch = useDispatch<AppDispatch>()
 
@@ -62,20 +64,62 @@ const Wishlist = () => {
         </div>
 
         <div className="flex space-x-2">
-          <Button
-            className="flex items-center justify-center gap-1.5 px-3 py-1 text-primary text-nowrap bg-white border hover:border-white hover:text-white hover:bg-primary text-xs font-medium rounded-md transition-all"
-            onClick={() => {
-              dispatch(addToCart(product))
+          {/* Mobile: icon-only Add to Cart */}
+          <button
+            className="flex md:hidden items-center justify-center w-9 h-9 rounded-md border border-primary text-primary bg-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={async () => {
+              if (session) {
+                setAddingToCartId(product.id)
+                await dispatch(addToCartAsync({ userId: session.user.id, product }))
+                setAddingToCartId(null)
+              } else {
+                dispatch(addToCart(product))
+              }
             }}
+            disabled={addingToCartId === product.id}
           >
-            Add To Cart
+            {addingToCartId === product.id ? (
+              <div className="animate-spin w-4 h-4 border-2 border-gray-300 border-t-primary rounded-full" />
+            ) : (
+              <ShoppingCart size={16} className="text-primary" />
+            )}
+          </button>
+
+          {/* Desktop: text Add to Cart */}
+          <Button
+            className="hidden md:flex items-center justify-center gap-1.5 px-3 py-1 text-primary text-nowrap bg-white border hover:border-white hover:text-white hover:bg-primary text-xs font-medium rounded-md transition-all"
+            onClick={async () => {
+              if (session) {
+                setAddingToCartId(product.id)
+                await dispatch(addToCartAsync({ userId: session.user.id, product }))
+                setAddingToCartId(null)
+              } else {
+                dispatch(addToCart(product))
+              }
+            }}
+            isLoading={addingToCartId === product.id}
+          >
+            {addingToCartId === product.id ? "Adding To Cart" : "Add To Cart"}
           </Button>
 
           <button
-            className="hover:cursor-pointer hover:text-grey transition duration-300"
-            onClick={() => { dispatch(removeFromWishlist(product.id)) }}
+            className="hover:cursor-pointer hover:text-grey transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={removingId === product.id}
+            onClick={async () => {
+              if (session) {
+                setRemovingId(product.id)
+                await dispatch(removeFromWishlistAsync({ userId: session.user.id, productId: product.id }))
+                setRemovingId(null)
+              } else {
+                dispatch(removeFromWishlist(product.id))
+              }
+            }}
           >
-            <X className="md:w-5 md:h-5 w-4 h-4" />
+            {removingId === product.id ? (
+              <div className="animate-spin md:w-5 md:h-5 w-4 h-4 border-2 border-gray-300 border-t-primary rounded-full"></div>
+            ) : (
+              <X className="md:w-5 md:h-5 w-4 h-4 hover:text-gray-400 transition-all duration-200" />
+            )}
           </button>
         </div>
 

@@ -17,8 +17,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { Session } from "@supabase/supabase-js";
 import Loader from "./ui/Loader";
-import { syncCartToSupabase, clearLocalCart } from "../app/features/cartSlice";
-import { syncWishlistToSupabase, clearLocalWishlist } from "../app/features/wishlistSlice";
+import { syncCartToSupabase, clearLocalCart, fetchAndHydrateCart } from "../app/features/cartSlice";
+import { syncWishlistToSupabase, clearLocalWishlist, fetchAndHydrateWishlist } from "../app/features/wishlistSlice";
 
 const UserDrawer = () => {
 
@@ -26,6 +26,7 @@ const UserDrawer = () => {
     const [session, setSession] = useState<Session | null>(null)
     const [isLoggingOut, setIsLoggingOut] = useState(false)
     const [isLoggingIn, setIsLoggingIn] = useState(false)
+    const [hasProcessedLogin, setHasProcessedLogin] = useState(false)
 
     // Redux state
     const dispatch = useDispatch<AppDispatch>();
@@ -44,13 +45,24 @@ const UserDrawer = () => {
             setSession(session)
             
             // User logged in - sync guest cart/wishlist to Supabase
-            if (session && isLoggingIn) {
+            if (session && isLoggingIn && !hasProcessedLogin) {
+                setHasProcessedLogin(true)
+                
                 if (cartProducts.length > 0) {
                     await dispatch(syncCartToSupabase({ userId: session.user.id, cartProducts }))
                 }
                 if (wishlistProducts.length > 0) {
                     await dispatch(syncWishlistToSupabase({ userId: session.user.id, wishlistProducts }))
                 }
+                
+                // Clear local state before fetching from database
+                dispatch(clearLocalCart())
+                dispatch(clearLocalWishlist())
+                
+                // Fetch cart/wishlist from Supabase
+                await dispatch(fetchAndHydrateCart(session.user.id))
+                await dispatch(fetchAndHydrateWishlist(session.user.id))
+                
                 setIsLoggingIn(false)
             }
             
@@ -59,11 +71,12 @@ const UserDrawer = () => {
                 dispatch(clearLocalCart())
                 dispatch(clearLocalWishlist())
                 setIsLoggingOut(false)
+                setHasProcessedLogin(false)
             }
         })
 
         return () => subscription.unsubscribe()
-    }, [isLoggingOut, isLoggingIn, dispatch, cartProducts, wishlistProducts])
+    }, [isLoggingOut, isLoggingIn, dispatch, cartProducts, wishlistProducts, hasProcessedLogin])
 
     // useForm
     type ILoginInput = z.infer<typeof loginSchema>;

@@ -11,8 +11,8 @@ import { selectRegister, userRegister } from "../app/features/registerSlice"
 import { useEffect } from "react"
 import PageHeader from "../components/PageHeader";
 import registerBg from "../assets/register-bg.png";
-import { selectCart, syncCartToSupabase } from "../app/features/cartSlice";
-import { selectWishlist, syncWishlistToSupabase } from "../app/features/wishlistSlice";
+import { selectCart, syncCartToSupabase, fetchAndHydrateCart, clearLocalCart } from "../app/features/cartSlice";
+import { selectWishlist, syncWishlistToSupabase, fetchAndHydrateWishlist, clearLocalWishlist } from "../app/features/wishlistSlice";
 
 
 const Register = () => {
@@ -59,6 +59,14 @@ const Register = () => {
         if (wishlistProducts.length > 0) {
           await dispatch(syncWishlistToSupabase({ userId: data.session.user.id, wishlistProducts }))
         }
+        
+        // Clear local state before fetching from database
+        dispatch(clearLocalCart())
+        dispatch(clearLocalWishlist())
+        
+        // Fetch from database
+        await dispatch(fetchAndHydrateCart(data.session.user.id))
+        await dispatch(fetchAndHydrateWishlist(data.session.user.id))
       }
       
       syncData().then(() => {
