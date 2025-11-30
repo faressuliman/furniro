@@ -6,6 +6,7 @@ import loginSlice from "./features/loginSlice"
 import registerSlice from "./features/registerSlice"
 import cartSlice from "./features/cartSlice"
 import wishlistSlice from "./features/wishlistSlice"
+import searchDrawerReducer from "./features/searchDrawerSlice"
 import { persistStore, persistReducer } from "redux-persist"
 import storage from "redux-persist/lib/storage"
 
@@ -33,6 +34,7 @@ export const store = configureStore({
         register: registerSlice,
         cart: persistedCart,
         wishlist: persistedWishlist,
+        searchDrawer: searchDrawerReducer,
     }
 })
 

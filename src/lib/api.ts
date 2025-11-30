@@ -5,7 +5,7 @@ import { supabase } from "../lib/supabaseClient";
 
 export const fetchUser = async () => {
     const { data, error } = await supabase.auth.getUser()
-    
+
     if (error) throw error
     return data.user
 }
@@ -31,6 +31,11 @@ export const fetchCategories = async () => {
     return res.data
 }
 
+export const searchProducts = async (query: string) => {
+    const res = await axiosInstance.get(`/products/search?q=${query}`)
+    return res.data.products
+}
+
 // Cart functions
 
 export const fetchCartFromDB = async (userId: string) => {
@@ -38,7 +43,7 @@ export const fetchCartFromDB = async (userId: string) => {
         .from('cart_items')
         .select('*')
         .eq('user_id', userId)
-    
+
     if (error) throw error
     return data
 }
@@ -48,7 +53,7 @@ export const addToCartDB = async (userId: string, productId: number, quantity: n
         .from('cart_items')
         .insert([{ user_id: userId, product_id: productId, quantity }])
         .select()
-    
+
     if (error) throw error
     return data
 }
@@ -59,7 +64,7 @@ export const updateCartItemDB = async (id: number, quantity: number) => {
         .update({ quantity })
         .eq('id', id)
         .select()
-    
+
     if (error) throw error
     return data
 }
@@ -69,7 +74,7 @@ export const removeFromCartDB = async (id: number) => {
         .from('cart_items')
         .delete()
         .eq('id', id)
-    
+
     if (error) throw error
 }
 
@@ -80,7 +85,7 @@ export const fetchWishlistFromDB = async (userId: string) => {
         .from('wishlist_items')
         .select('*')
         .eq('user_id', userId)
-    
+
     if (error) throw error
     return data
 }
@@ -90,7 +95,7 @@ export const addToWishlistDB = async (userId: string, productId: number) => {
         .from('wishlist_items')
         .insert([{ user_id: userId, product_id: productId }])
         .select()
-    
+
     if (error) throw error
     return data
 }
@@ -100,7 +105,7 @@ export const removeFromWishlistDB = async (id: number) => {
         .from('wishlist_items')
         .delete()
         .eq('id', id)
-    
+
     if (error) throw error
 }
 
@@ -136,7 +141,7 @@ export const checkProductInCartDB = async (userId: string, productId: number) =>
         .eq('user_id', userId)
         .eq('product_id', productId)
         .single()
-    
+
     if (error && error.code !== 'PGRST116') throw error
     return data
 }
@@ -148,7 +153,7 @@ export const checkProductInWishlistDB = async (userId: string, productId: number
         .eq('user_id', userId)
         .eq('product_id', productId)
         .single()
-    
+
     if (error && error.code !== 'PGRST116') throw error
     return data
 }

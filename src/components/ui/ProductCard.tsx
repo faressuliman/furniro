@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { Session } from "@supabase/supabase-js";
 
-const ProductCard = ({ id, title, category, price, thumbnail,}: IProduct) => {
+const ProductCard = ({ id, title, category, price, thumbnail, }: IProduct) => {
 
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
@@ -57,7 +57,7 @@ const ProductCard = ({ id, title, category, price, thumbnail,}: IProduct) => {
   }
 
   return (
-    <div className="w-[160px] sm:w-[220px] md:w-[220px] rounded-md xl:w-[280px] bg-[#f8f8f8] shadow-md flex flex-col h-[320px] sm:h-[370px] hover:-translate-y-1 transition-all duration-200">
+    <div className="w-[160px] sm:w-[220px] md:w-[220px] rounded-md xl:w-[280px] bg-[#f8f8f8] shadow-md flex flex-col h-[320px] sm:h-[370px] hover:-translate-y-1 transition-all duration-200 border border-gray-200">
       <div className="hover:cursor-pointer hover:opacity-85 transition duration-300 flex-1 flex flex-col" onClick={() => navigate(`/product/${id}`)}>
         {/* Product Image */}
         <img
@@ -89,7 +89,7 @@ const ProductCard = ({ id, title, category, price, thumbnail,}: IProduct) => {
       {/* Buttons */}
       <div className="px-3 sm:px-4 pb-3 sm:pb-4 text-xs">
         <div className="flex items-center justify-center gap-2 w-full">
-          <Button 
+          <Button
             className="flex-1 flex items-center justify-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-4 sm:py-2 text-white bg-primary border hover:bg-white hover:border-primary hover:text-primary text-[10px] sm:text-sm font-medium rounded-md transition-all whitespace-nowrap"
             onClick={handleAddToCart}
             isLoading={isAddingToCart}
@@ -108,9 +108,8 @@ const ProductCard = ({ id, title, category, price, thumbnail,}: IProduct) => {
             ) : (
               <Heart
                 size={24}
-                className={`transition-colors ${
-                  isInWishList ? "fill-primary text-primary" : "text-gray-700 group-hover:text-primary"
-                }`}
+                className={`transition-colors ${isInWishList ? "fill-primary text-primary" : "text-gray-700 group-hover:text-primary"
+                  }`}
               />
             )}
           </button>

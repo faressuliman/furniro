@@ -3,6 +3,7 @@ import Navbar from "./Navbar";
 import MenuDrawer from "../components/MenuDrawer";
 import UserDrawer from "../components/UserDrawer";
 import CartDrawer from "../components/CartDrawer";
+import SearchDrawer from "../components/SearchDrawer";
 import ScrollToTopWrapper from "../components/ScrollToTopWrapper";
 import Footer from "./Footer";
 
@@ -14,6 +15,7 @@ const Layout = () => {
         <MenuDrawer />
         <UserDrawer />
         <CartDrawer />
+        <SearchDrawer />
         <main className="flex-1">
           <Outlet />
         </main>

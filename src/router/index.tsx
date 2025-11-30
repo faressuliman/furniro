@@ -11,6 +11,7 @@ const Register = lazy(() => import("../pages/Register"));
 const Wishlist = lazy(() => import("../pages/Wishlist"));
 const Checkout = lazy(() => import("../pages/Checkout"));
 const Product = lazy(() => import("../pages/Product"));
+const SearchResults = lazy(() => import("../pages/SearchResults"));
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -24,6 +25,7 @@ const router = createBrowserRouter(
       <Route path="checkout" element={<Checkout />} />
       <Route path="wishlist" element={<Wishlist />} />
       <Route path="product/:id" element={<Product />} />
+      <Route path="search" element={<SearchResults />} />
     </Route>
   )
 );

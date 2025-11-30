@@ -1,18 +1,30 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #B88E2F;
-  --color-secondary: #FFF3E3;
-  --color-grey: #333333;
+    --color-primary: #B88E2F;
+    --color-secondary: #FFF3E3;
+    --color-grey: #333333;
 }
 
 .active {
     color: #B88E2F;
 }
 
+/* Mobile landscape mode fix for hero section */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    section.relative.h-\[80vh\] {
+        min-height: 600px !important;
+        height: auto !important;
+    }
+}
+
 /* iPad Pro / Inverted tablets grid layout */
 @media screen and (min-width: 1024px) and (max-width: 1366px) {
     .products-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .features {
+        padding: 0 4rem
     }
 }

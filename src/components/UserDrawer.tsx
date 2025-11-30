@@ -41,31 +41,31 @@ const UserDrawer = () => {
             setSession(session)
         })
 
-        const { data: { subscription },} = supabase.auth.onAuthStateChange(async (_event, session) => {
+        const { data: { subscription }, } = supabase.auth.onAuthStateChange(async (_event, session) => {
             setSession(session)
-            
+
             // User logged in - sync guest cart/wishlist to Supabase
             if (session && isLoggingIn && !hasProcessedLogin) {
                 setHasProcessedLogin(true)
-                
+
                 if (cartProducts.length > 0) {
                     await dispatch(syncCartToSupabase({ userId: session.user.id, cartProducts }))
                 }
                 if (wishlistProducts.length > 0) {
                     await dispatch(syncWishlistToSupabase({ userId: session.user.id, wishlistProducts }))
                 }
-                
+
                 // Clear local state before fetching from database
                 dispatch(clearLocalCart())
                 dispatch(clearLocalWishlist())
-                
+
                 // Fetch cart/wishlist from Supabase
                 await dispatch(fetchAndHydrateCart(session.user.id))
                 await dispatch(fetchAndHydrateWishlist(session.user.id))
-                
+
                 setIsLoggingIn(false)
             }
-            
+
             // User logged out - clear local state
             if (!session && isLoggingOut) {
                 dispatch(clearLocalCart())
@@ -130,7 +130,7 @@ const UserDrawer = () => {
                 aria-labelledby="drawer-backdrop-label"
             >
                 <h5 id="drawer-backdrop-label" className="text-base font-bold mb-4 px-2">
-                    {session ? `Hi, ${userData?.user_metadata?.username || 'User'}` : "LOGIN"}
+                    {session ? `Hi, ${userData?.user_metadata?.username || ' '}` : "LOGIN"}
                 </h5>
 
                 {/* Close button */}
@@ -212,7 +212,7 @@ const UserDrawer = () => {
                                 <p className="text-gray-600 text-xs underline text-center mb-5">Forgot your password?</p>
                             </NavLink>
                             <NavLink to="/register">
-                                <Button onClick={() => {dispatch(closeUserDrawer()); clearErrors()}}
+                                <Button onClick={() => { dispatch(closeUserDrawer()); clearErrors() }}
                                     className="w-full rounded-md bg-white border text-primary border-primary hover:bg-primary hover:-translate-y-1 hover:text-white text-sm">
                                     CREATE ACCOUNT
                                 </Button>

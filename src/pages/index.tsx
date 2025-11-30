@@ -1,36 +1,30 @@
 import hero from "../assets/hero-bg.png";
 import Button from "../components/ui/Button";
-import { sectionsData } from "../data";
-import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import decoration1 from "../assets/decoration1.jpg";
-import decoration2 from "../assets/decoration2.jpg";
-import decoration3 from "../assets/decoration3.jpg";
-
-const slides = [decoration1, decoration2, decoration3];
+import { useQuery } from "@tanstack/react-query";
+import { getProductsByCategory } from "../lib/api";
+import ProductCard from "../components/ui/ProductCard";
+import ProductCardSkeleton from "../components/ui/ProductSkeleton";
+import { IProduct } from "../interfaces";
+import { useNavigate } from "react-router-dom";
+import { featuresData } from "../data/features";
 
 const Index = () => {
+  const navigate = useNavigate();
 
-  const renderSectionsData = sectionsData.map(({ title, imageURL }) => (
-    <div key={title} className="h-[500px] flex flex-col items-center gap-4 pt-5">
-      <div className="w-[380px] lg:w-[300px] xl:w-[380px] h-[480px] rounded-md overflow-hidden shadow-lg hover:opacity-70 transition-opacity duration-300 hover:cursor-pointer">
-        <img src={imageURL} alt={title} className="w-full h-full object-cover" />
-      </div>
-      <h2 className="text-grey font-bold md:text-xl text-lg">{title}</h2>
-    </div>
-  ));
+  const { data: furnitureData, isLoading: furnitureLoading } = useQuery({
+    queryKey: ["furniture"],
+    queryFn: () => getProductsByCategory("furniture"),
+  });
 
-  
+  const { data: decorationData, isLoading: decorationLoading } = useQuery({
+    queryKey: ["home-decoration"],
+    queryFn: () => getProductsByCategory("home-decoration"),
+  });
 
-  const [current, setCurrent] = useState(0);
+  const isLoading = furnitureLoading || decorationLoading;
 
-  // Auto-slide every 5 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  const allFurnitureProducts = furnitureData?.slice(0, 4) || [];
+  const allDecorationProducts = decorationData?.slice(0, 4) || [];
 
   return (
     <>
@@ -45,115 +39,122 @@ const Index = () => {
         </section>
 
         <section className="relative z-10 w-full max-w-7xl xl:max-w-8xl mx-auto px-6 lg:px-16">
-          <div className="bg-secondary p-8 sm:p-10 lg:p-12 md:ml-auto w-11/12 max-w-lg sm:max-w-xl md:max-w-md lg:max-w-[550px]">
-            <p className="tracking-widest text-sm font-bold mb-3 sm:mb-4">
+          <div className="bg-[#FFF3E3] p-8 sm:p-10 lg:p-12 md:ml-auto w-11/12 max-w-lg sm:max-w-xl md:max-w-md lg:max-w-[600px] rounded-sm">
+            <p className="tracking-widest text-sm font-bold mb-3 sm:mb-4 text-gray-900">
               New Arrival
             </p>
 
-            <h1 className="tracking-wide text-2xl sm:text-3xl lg:text-5xl text-primary font-bold md:mb-2 sm:mb-4 leading-tight">
-              Discover Our
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl text-primary font-bold mb-4 leading-tight">
+              Discover Our <br /> New Collection
             </h1>
 
-            <h1 className="tracking-wide text-2xl sm:text-3xl lg:text-5xl text-primary font-bold mb-3 sm:mb-4 leading-tight">
-              New Collection
-            </h1>
-
-            <p className="font-medium text-sm sm:text-base mb-4 sm:mb-6 lg:mb-8">
+            <p className="font-medium text-sm sm:text-base mb-6 lg:mb-8 text-gray-700">
               Elevate your space with our latest curated furniture and decor.
               Experience the perfect blend of modern design, crafted for comfort
               and lasting style.
             </p>
 
-            <Button className="w-full md:w-48 py-4 text-white bg-primary border hover:bg-secondary hover:-translate-y-1 hover:border-primary hover:text-primary mb-4 text-sm">
-              SHOP NOW
+            <Button
+              onClick={() => navigate("/shop")}
+              className="w-full md:w-48 py-4 text-white bg-primary border hover:bg-transparent hover:border-primary hover:text-primary transition-all duration-300 text-sm font-bold uppercase"
+            >
+              BUY NOW
             </Button>
           </div>
         </section>
       </section>
 
-      {/* Dining/Living/Bedroom Section */}
-      <section className="mt-8 max-w-screen-3xl mx-auto p-4 lg:px-12">
-        <h2 className="text-grey font-bold md:text-3xl text-2xl text-center mb-1">
-          Browse The Range
-        </h2>
-        <p className="md:text-lg text-md text-center mb-5">
-          Intriguing and concise. Explore a world of possibilities with our
-          diverse and ever-growing selection.
-        </p>
+      {/* Products Section */}
+      <section className="py-16 px-4 max-w-screen-3xl mx-auto">
+        {/* Furniture Category */}
+        <div className="mb-16">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Furniture</h2>
+            <button
+              onClick={() => navigate("/shop")}
+              className="text-xs font-medium text-gray-600 hover:text-gray-400 underline transition-colors hover:cursor-pointer duration-200"
+            >
+              Shop All
+            </button>
+          </div>
 
-        <div className="flex xl:flex xl:flex-row flex-col space-y-8 max-w-screen-3xl justify-center lg:grid lg:grid-cols-3 lg:gap-x-8">
-          {renderSectionsData}
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-8 sm:gap-x-6 md:gap-8 lg:gap-x-5 lg:gap-y-8">
+            {isLoading ? (
+              [...Array(4)].map((_, i) => <ProductCardSkeleton key={i} />)
+            ) : (
+              <>
+                {/* Show 4 on mobile, 3 on tablet (md), 4 on desktop (lg) */}
+                {allFurnitureProducts.map((product: IProduct, index: number) => (
+                  <div key={product.id} className={index === 3 ? "md:hidden lg:block" : ""}>
+                    <ProductCard
+                      id={product.id}
+                      title={product.title}
+                      category={product.category}
+                      price={product.price}
+                      thumbnail={product.thumbnail}
+                    />
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
         </div>
-      </section>
 
-      {/* Room Inspiration Section */}
-      <section className="mt-20 bg-secondary py-16">
-        <div className="max-w-screen-3xl mx-auto p-4 lg:px-12">
-          <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-10">
+        <hr className="my-16 text-gray-300 mx-auto lg:w-5/8" />
 
-            {/* Text */}
-            <div className="lg:w-1/3 w-full space-y-6 text-center lg:text-left">
-              <h2 className="md:text-3xl text-2xl font-bold text-gray-800">
-                50+ Beautiful rooms inspiration
-              </h2>
-              <p className="text-gray-600">
-                Our designer already made a lot of beautiful prototypes of rooms that inspire you.
-              </p>
-              <div className="flex justify-center lg:justify-start">
-                <Button className="bg-primary text-white border hover:bg-secondary hover:text-primary hover:border-primary transition-all hover:-translate-y-1">
-                  Explore More
-                </Button>
-              </div>
-            </div>
+        {/* Decoration Category */}
+        <div>
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Decoration</h2>
+            <button
+              onClick={() => navigate("/shop")}
+              className="text-xs font-medium text-gray-600 hover:text-gray-400 underline transition-colors hover:cursor-pointer duration-200"
+            >
+              Shop All
+            </button>
+          </div>
 
-            {/* Slideshow */}
-            <div className="lg:w-2/3 w-full relative">
-              <div className="overflow-hidden rounded-lg shadow-md relative h-[400px]">
-                {slides.map((src, index) => (
-                  <img
-                    key={index}
-                    src={src}
-                    alt={`Room inspiration ${index + 1}`}
-                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${index === current ? "opacity-100" : "opacity-0"
-                      }`}
-                  />
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-8 sm:gap-x-6 md:gap-8 lg:gap-x-5 lg:gap-y-8">
+            {isLoading ? (
+              [...Array(4)].map((_, i) => <ProductCardSkeleton key={`decoration-${i}`} />)
+            ) : (
+              <>
+                {/* Show 4 on mobile, 3 on tablet (md), 4 on desktop (lg) */}
+                {allDecorationProducts.map((product: IProduct, index: number) => (
+                  <div key={product.id} className={index === 3 ? "md:hidden lg:block" : ""}>
+                    <ProductCard
+                      id={product.id}
+                      title={product.title}
+                      category={product.category}
+                      price={product.price}
+                      thumbnail={product.thumbnail}
+                    />
+                  </div>
                 ))}
-              </div>
-
-              {/* Navigation buttons */}
-              <button
-                onClick={() =>
-                  setCurrent((prev) => (prev - 1 + slides.length) % slides.length)
-                }
-                className="absolute top-1/2 left-4 -translate-y-1/2 bg-white/80 p-2 rounded-full hover:bg-white shadow hover:cursor-pointer"
-              >
-                <ChevronLeft className="w-6 h-6 text-gray-700" />
-              </button>
-              <button
-                onClick={() => setCurrent((prev) => (prev + 1) % slides.length)}
-                className="absolute top-1/2 right-4 -translate-y-1/2 bg-white/80 p-2 rounded-full hover:bg-white shadow hover:cursor-pointer"
-              >
-                <ChevronRight className="w-6 h-6 text-gray-700" />
-              </button>
-
-              {/* Dots */}
-              <div className="flex justify-center mt-4 space-x-2">
-                {slides.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrent(index)}
-                    className={`w-3 h-3 rounded-full transition hover:cursor-pointer ${index === current
-                      ? "bg-primary"
-                      : "bg-gray-300 hover:bg-gray-400"
-                      }`}
-                  ></button>
-                ))}
-              </div>
-            </div>
+              </>
+            )}
           </div>
         </div>
       </section>
 
+      {/* Features Section */}
+      <section className="bg-[#FAF3EA] py-8 md:py-16">
+        <div className="features px-4 max-w-screen-3xl mx-auto container px-6 md:px-6 lg:px-32">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8">
+            {featuresData.map((feature, index) => (
+              <div key={index} className="flex items-center gap-4">
+                <div className="text-gray-900">
+                  {feature.icon}
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">{feature.title}</h3>
+                  <p className="text-gray-500 font-medium text-sm">{feature.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
   );
 };

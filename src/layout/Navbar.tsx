@@ -6,13 +6,15 @@ import { openSidebar } from "../app/features/menuDrawerSlice"
 import { openUserDrawer } from "../app/features/userDrawerSlice"
 import { AppDispatch } from "../app/store";
 import { openCartDrawer, selectCart } from "../app/features/cartSlice";
+import { openSearchDrawer } from "../app/features/searchDrawerSlice";
+import SearchDropDown from "../components/SearchDropDown";
 
 const Navbar = () => {
 
     const dispatch = useDispatch<AppDispatch>()
     const navigate = useNavigate()
     const { count } = useSelector(selectCart)
-    
+
     return (
         <nav className="bg-white shadow-xs">
             <div className="mx-auto max-w-screen-3xl p-4 lg:px-12">
@@ -28,7 +30,10 @@ const Navbar = () => {
                             <Menu className="w-5 h-5" />
                         </button>
 
-                        <button className="text-gray-700 hover:text-primary hover:cursor-pointer transition-colors">
+                        <button
+                            className="text-gray-700 hover:text-primary hover:cursor-pointer transition-colors"
+                            onClick={() => dispatch(openSearchDrawer())}
+                        >
                             <Search className="w-5 h-5" />
                         </button>
                     </div>
@@ -43,7 +48,7 @@ const Navbar = () => {
                             <UserRound className="w-5 h-5" />
                         </button>
                         <button className="hover:text-primary hover:cursor-pointer transition-colors relative text-gray-700"
-                                onClick={() => { dispatch(openCartDrawer())} }>
+                            onClick={() => { dispatch(openCartDrawer()) }}>
                             <ShoppingCart className="w-5 h-5" />
                             <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full px-1.5">
                                 {count}
@@ -95,16 +100,7 @@ const Navbar = () => {
                     </ul>
 
                     <div className="flex items-center gap-5 text-gray-700">
-                        <div className="relative">
-                            <input
-                                type="text"
-                                className="block w-48 p-2 text-sm focus:outline-none border-b border-gray-400 focus:border-primary duration-200 placeholder:text-black transition-all"
-                                placeholder="Search"
-                            />
-                            <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                                <Search className="w-4 h-4 text-gray-500" />
-                            </div>
-                        </div>
+                        <SearchDropDown />
 
                         <button className="hover:text-primary hover:cursor-pointer transition-colors"
                             onClick={() => {
