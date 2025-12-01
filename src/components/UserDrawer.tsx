@@ -155,8 +155,8 @@ const UserDrawer = () => {
                     <div className="py-4">
                         <ul className="space-y-2 font-semibold text-gray-800 text-xs">
                             <li>
-                                <NavLink to="/account" className="block p-1 hover:text-gray-400 duration-300 transition-all" onClick={() => dispatch(closeUserDrawer())}>
-                                    Account Details
+                                <NavLink to="/orders" className="block p-1 hover:text-gray-400 duration-300 transition-all" onClick={() => dispatch(closeUserDrawer())}>
+                                    My Orders
                                 </NavLink>
                             </li>
                             <hr className="text-gray-200" />

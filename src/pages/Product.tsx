@@ -70,7 +70,7 @@ const Product = () => {
         : (
           <>
             <div className="mt-3 container mx-auto px-4 md:px-16 md:w-[1200px]">
-              <Button className="space-x-2 text-primary font-medium hover:text-amber-400" onClick={() => navigate("/shop")}>
+              <Button className="space-x-2 text-primary font-medium hover:text-amber-400 mt-8" onClick={() => navigate("/shop")}>
                 <Undo2 />
                 <h3>Back to Shop</h3>
               </Button>

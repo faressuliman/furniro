@@ -13,13 +13,17 @@ import { Session } from "@supabase/supabase-js";
 
 const ProductCard = ({ id, title, category, price, thumbnail, }: IProduct) => {
 
+  // Hooks
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
   const { wishlistProducts } = useSelector(selectWishlist)
+
+  // States
   const [session, setSession] = useState<Session | null>(null)
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   const [isTogglingWishlist, setIsTogglingWishlist] = useState(false)
 
+  // Get current session on mount
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
@@ -34,6 +38,7 @@ const ProductCard = ({ id, title, category, price, thumbnail, }: IProduct) => {
 
   const isInWishList = wishlistProducts.some((product) => product.id === id)
 
+  // Handlers
   const handleAddToCart = async () => {
     const product = { id, title, price, thumbnail }
     if (session) {
@@ -57,7 +62,7 @@ const ProductCard = ({ id, title, category, price, thumbnail, }: IProduct) => {
   }
 
   return (
-    <div className="w-[160px] sm:w-[220px] md:w-[220px] rounded-md xl:w-[280px] bg-[#f8f8f8] shadow-md flex flex-col h-[320px] sm:h-[370px] hover:-translate-y-1 transition-all duration-200 border border-gray-200">
+    <div className="w-[160px] sm:w-[220px] md:w-[220px] rounded-md xl:w-[280px] bg-[#f8f8f8] shadow-md flex flex-col h-[320px] sm:h-[370px] transition-all duration-200 border border-gray-200">
       <div className="hover:cursor-pointer hover:opacity-85 transition duration-300 flex-1 flex flex-col" onClick={() => navigate(`/product/${id}`)}>
         {/* Product Image */}
         <img

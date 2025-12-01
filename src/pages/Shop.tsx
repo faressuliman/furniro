@@ -120,7 +120,7 @@ const Shop = () => {
       setIsChangingPage(true);
       const timer = setTimeout(() => {
         setIsChangingPage(false);
-      }, 300);
+      }, 200);
 
       prevPageRef.current = currentPage;
       return () => clearTimeout(timer);

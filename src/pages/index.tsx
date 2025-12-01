@@ -39,7 +39,7 @@ const Index = () => {
         </section>
 
         <section className="relative z-10 w-full max-w-7xl xl:max-w-8xl mx-auto px-6 lg:px-16">
-          <div className="bg-[#FFF3E3] p-8 sm:p-10 lg:p-12 md:ml-auto w-11/12 max-w-lg sm:max-w-xl md:max-w-md lg:max-w-[600px] rounded-sm">
+          <div className="bg-secondary p-8 sm:p-10 lg:p-12 md:ml-auto w-11/12 max-w-lg sm:max-w-xl md:max-w-md lg:max-w-[600px] rounded-sm">
             <p className="tracking-widest text-sm font-bold mb-3 sm:mb-4 text-gray-900">
               New Arrival
             </p>
@@ -58,7 +58,7 @@ const Index = () => {
               onClick={() => navigate("/shop")}
               className="w-full md:w-48 py-4 text-white bg-primary border hover:bg-transparent hover:border-primary hover:text-primary transition-all duration-300 text-sm font-bold uppercase"
             >
-              BUY NOW
+              SHOP NOW
             </Button>
           </div>
         </section>
@@ -80,7 +80,14 @@ const Index = () => {
 
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-8 sm:gap-x-6 md:gap-8 lg:gap-x-5 lg:gap-y-8">
             {isLoading ? (
-              [...Array(4)].map((_, i) => <ProductCardSkeleton key={i} />)
+              <>
+                {/* 4 on mobile, 3 on tablet (md), 4 on desktop (lg) */}
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className={i === 3 ? "md:hidden lg:block" : ""}>
+                    <ProductCardSkeleton />
+                  </div>
+                ))}
+              </>
             ) : (
               <>
                 {/* Show 4 on mobile, 3 on tablet (md), 4 on desktop (lg) */}
@@ -116,7 +123,17 @@ const Index = () => {
 
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-8 sm:gap-x-6 md:gap-8 lg:gap-x-5 lg:gap-y-8">
             {isLoading ? (
-              [...Array(4)].map((_, i) => <ProductCardSkeleton key={`decoration-${i}`} />)
+              <>
+                {/* 4 on mobile, 3 on tablet (md), 4 on desktop (lg) */}
+                {[...Array(4)].map((_, i) => (
+                  <div
+                    key={`decoration-${i}`}
+                    className={i === 3 ? "md:hidden lg:block" : ""}
+                  >
+                    <ProductCardSkeleton />
+                  </div>
+                ))}
+              </>
             ) : (
               <>
                 {/* Show 4 on mobile, 3 on tablet (md), 4 on desktop (lg) */}
@@ -139,7 +156,7 @@ const Index = () => {
 
       {/* Features Section */}
       <section className="bg-[#FAF3EA] py-8 md:py-16">
-        <div className="features px-4 max-w-screen-3xl mx-auto container px-6 md:px-6 lg:px-32">
+        <div className="features max-w-screen-3xl mx-auto container px-6 md:px-6 lg:px-32">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8">
             {featuresData.map((feature, index) => (
               <div key={index} className="flex items-center gap-4">

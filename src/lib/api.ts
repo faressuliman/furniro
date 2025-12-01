@@ -1,5 +1,6 @@
 import axiosInstance from "./axios"
 import { supabase } from "../lib/supabaseClient";
+import { ICreateOrderItemPayload, ICreateOrderPayload } from "../interfaces";
 
 // User function
 
@@ -157,3 +158,46 @@ export const checkProductInWishlistDB = async (userId: string, productId: number
     if (error && error.code !== 'PGRST116') throw error
     return data
 }
+
+// Order functions
+
+export const createOrder = async (payload: ICreateOrderPayload) => {
+    const { userId, ...rest } = payload;
+
+    const { data, error } = await supabase
+        .from("orders")
+        .insert([
+            {
+                user_id: userId,
+                ...rest,
+            },
+        ])
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data;
+};
+
+export const createOrderItems = async (items: ICreateOrderItemPayload[]) => {
+    if (items.length === 0) return [];
+
+    const { data, error } = await supabase
+        .from("order_items")
+        .insert(items)
+        .select();
+
+    if (error) throw error;
+    return data;
+};
+
+export const fetchOrders = async (userId: string) => {
+    const { data, error } = await supabase
+        .from("orders")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    return data;
+};

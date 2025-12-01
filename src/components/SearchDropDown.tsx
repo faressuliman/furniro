@@ -93,7 +93,7 @@ const SearchDropDown = () => {
                                     className="flex gap-3 p-3 hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-50 last:border-none"
                                     onClick={() => handleProductClick(product.id)}
                                 >
-                                    <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
+                                    <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden shrink-0">
                                         <img
                                             src={product.thumbnail}
                                             alt={product.title}
