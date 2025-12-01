@@ -18,13 +18,9 @@
     }
 }
 
-/* iPad Pro / Inverted tablets grid layout */
-@media screen and (min-width: 1024px) and (max-width: 1366px) {
+/* iPad Pro / tablet grid layout: 2 columns for products only in this range */
+@media screen and (min-width: 1024px) and (max-width: 1199px) {
     .products-grid {
         grid-template-columns: repeat(2, 1fr);
-    }
-
-    .features {
-        padding: 0 4rem
     }
 }

@@ -238,7 +238,7 @@ const Shop = () => {
               <PageSizeDropdown value={pageSize} onChange={setPageSize} />
             </div>
             {isLoading || categoryProductsLoading ? (
-              <div className="lg:w-11/12 w-full products-grid grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 md:gap-8 lg:grid-cols-3 xl:grid-cols-4 lg:gap-x-5 lg:gap-y-8 xl:gap-y-8 lg:border lg:border-gray-200 lg:rounded-lg lg:p-8 justify-items-center">
+              <div className="lg:w-11/12 w-full products-grid grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 md:gap-8 lg:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] lg:gap-x-5 lg:gap-y-8 xl:gap-y-8 lg:border lg:border-gray-200 lg:rounded-lg lg:p-8 justify-items-center">
                 {[...Array(12)].map((_, i) => <ProductCardSkeleton key={i} />)}
               </div>
             ) : isSorting || isChangingPage ? (
@@ -246,7 +246,7 @@ const Shop = () => {
                 <Loader />
               </div>
             ) : (
-              <div className="lg:w-11/12 w-full products-grid grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 md:gap-8 lg:grid-cols-3 xl:grid-cols-4 lg:gap-x-5 lg:gap-y-8 xl:gap-y-8 lg:border lg:border-gray-200 lg:rounded-lg lg:p-8 justify-items-center">
+              <div className="lg:w-11/12 w-full products-grid grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 md:gap-8 lg:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] lg:gap-x-5 lg:gap-y-8 xl:gap-y-8 lg:border lg:border-gray-200 lg:rounded-lg lg:p-8 justify-items-center">
                 {paginatedProducts.map((product: IProduct) => (
                   <ProductCard
                     id={product.id}

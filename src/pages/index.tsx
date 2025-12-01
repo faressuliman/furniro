@@ -156,17 +156,17 @@ const Index = () => {
       </section>
 
       {/* Features Section */}
-      <section className="bg-[#FAF3EA] py-8 md:py-16">
-        <div className="max-w-screen-3xl mx-auto px-4 md:px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8">
+      <section className="bg-[#FAF3EA] py-8 md:py-4 mt-4">
+        <div className="max-w-screen-3xl container mx-auto px-4 md:px-6 ">
+          <div className="flex flex-col md:flex-row md:gap-x-8 lg:gap-x-32 gap-y-8 container mx-auto w-fit">
             {featuresData.map((feature, index) => (
               <div key={index} className="flex items-center gap-4">
                 <div className="text-gray-900">
                   {feature.icon}
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900">{feature.title}</h3>
-                  <p className="text-gray-500 font-medium text-sm">{feature.description}</p>
+                  <h3 className="text-md font-bold text-gray-900">{feature.title}</h3>
+                  <p className="text-gray-500 font-medium text-xs">{feature.description}</p>
                 </div>
               </div>
             ))}
