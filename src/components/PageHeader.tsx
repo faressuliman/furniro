@@ -9,7 +9,12 @@ const PageHeader = ({ title }: IProps) => {
     
     return (
         <section className="relative w-full h-[316px] flex items-center justify-center">
-            <img src={background} className="absolute inset-0 w-full h-full object-cover brightness-90" />
+            <img
+                src={background}
+                loading="eager"
+                alt="Page header background"
+                className="absolute inset-0 w-full h-full object-cover brightness-90"
+            />
             <div className="absolute inset-0 z-10 text-center pl-3 lg:pl-0">
                 
                 {/* Title */}

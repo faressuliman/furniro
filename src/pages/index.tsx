@@ -33,6 +33,7 @@ const Index = () => {
         <section className="absolute inset-0">
           <img
             src={hero}
+            loading="eager"
             className="w-full h-full object-cover"
             alt="Stylish room with modern furniture"
           />
@@ -156,7 +157,7 @@ const Index = () => {
 
       {/* Features Section */}
       <section className="bg-[#FAF3EA] py-8 md:py-16">
-        <div className="features max-w-screen-3xl mx-auto container px-6 md:px-6 lg:px-32">
+        <div className="max-w-screen-3xl mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8">
             {featuresData.map((feature, index) => (
               <div key={index} className="flex items-center gap-4">
