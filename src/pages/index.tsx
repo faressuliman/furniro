@@ -158,7 +158,7 @@ const Index = () => {
       {/* Features Section */}
       <section className="bg-[#FAF3EA] py-8 md:py-4 mt-4">
         <div className="max-w-screen-3xl container mx-auto px-4 md:px-6 ">
-          <div className="flex flex-col md:flex-row md:gap-x-8 lg:gap-x-32 gap-y-8 md:container md:mx-auto w-fit px-4 md:px-0">
+          <div className="flex flex-col md:flex-row md:gap-x-8 lg:gap-x-32 gap-y-8 container md:mx-auto w-fit">
             {featuresData.map((feature, index) => (
               <div key={index} className="flex items-center gap-4">
                 <div className="text-gray-900">

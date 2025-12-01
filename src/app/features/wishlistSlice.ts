@@ -91,6 +91,11 @@ const wishlistSlice = createSlice({
 
             else {
                 state.wishlistProducts.push({ ...action.payload })
+                toast.success("Added to wishlist!", {
+                    position: "bottom-right",
+                    duration: 2000,
+                    style: { background: 'white', color: 'black' }
+                });
             }
         },
 

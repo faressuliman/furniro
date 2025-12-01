@@ -59,9 +59,9 @@ const registerSlice = createSlice({
                 state.loading = false;
                 state.data = action.payload;
                 state.error = null;
-                toast.success("Your account has been successfully created!", {
+                toast.success("Your account has been successfully created, logging you in...", {
                     position: "bottom-center",
-                    duration: 3000,
+                    duration: 4000,
                     style: { background: 'white', color: 'black' }
                 });
                 
