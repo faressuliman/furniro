@@ -8,7 +8,7 @@ import ErrorMessage from "../components/ui/ErrorMessage";
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch } from "../app/store"
 import { selectRegister, userRegister } from "../app/features/registerSlice"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import PageHeader from "../components/PageHeader";
 import registerBg from "../assets/register-bg.png";
 import { selectCart, syncCartToSupabase, fetchAndHydrateCart, clearLocalCart } from "../app/features/cartSlice";
@@ -21,6 +21,7 @@ const Register = () => {
   const { loading, data } = useSelector(selectRegister)
   const { cartProducts } = useSelector(selectCart)
   const { wishlistProducts } = useSelector(selectWishlist)
+  const [hasSyncedAfterRegister, setHasSyncedAfterRegister] = useState(false)
 
   // useForm
   type IRegisterInput = z.infer<typeof registerSchema>;
@@ -50,32 +51,35 @@ const Register = () => {
   }
 
   useEffect(() => {
-    if (data?.session) {
-      // Sync guest cart/wishlist to Supabase after registration
-      const syncData = async () => {
-        if (cartProducts.length > 0) {
-          await dispatch(syncCartToSupabase({ userId: data.session.user.id, cartProducts }))
-        }
-        if (wishlistProducts.length > 0) {
-          await dispatch(syncWishlistToSupabase({ userId: data.session.user.id, wishlistProducts }))
-        }
-        
-        // Clear local state before fetching from database
-        dispatch(clearLocalCart())
-        dispatch(clearLocalWishlist())
-        
-        // Fetch from database
-        await dispatch(fetchAndHydrateCart(data.session.user.id))
-        await dispatch(fetchAndHydrateWishlist(data.session.user.id))
+    if (!data?.session || hasSyncedAfterRegister) return
+
+    setHasSyncedAfterRegister(true)
+
+    // Sync guest cart/wishlist to Supabase after registration
+    const syncData = async () => {
+      if (cartProducts.length > 0) {
+        await dispatch(syncCartToSupabase({ userId: data.session.user.id, cartProducts }))
       }
-      
-      syncData().then(() => {
-        setTimeout(() => {
-          window.location.href = "/"; 
-        }, 3000);
-      })
+      if (wishlistProducts.length > 0) {
+        await dispatch(syncWishlistToSupabase({ userId: data.session.user.id, wishlistProducts }))
+      }
+
+      // Clear local state before fetching from database
+      dispatch(clearLocalCart())
+      dispatch(clearLocalWishlist())
+
+      // Fetch from database
+      await dispatch(fetchAndHydrateCart(data.session.user.id))
+      await dispatch(fetchAndHydrateWishlist(data.session.user.id))
     }
-  }, [data, dispatch, cartProducts, wishlistProducts])
+
+    syncData().then(() => {
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 3000);
+    })
+
+  }, [data, dispatch, cartProducts, wishlistProducts, hasSyncedAfterRegister])
 
   return (
     <div>
