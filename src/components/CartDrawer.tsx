@@ -8,12 +8,16 @@ import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { Session } from "@supabase/supabase-js";
+import useScrollLock from "../hooks/useScrollLock";
 
 const CartDrawer = () => {
 
     const navigate = useNavigate()
     const dispatch = useDispatch<AppDispatch>();
     const { isOpenCartDrawer, cartProducts, count } = useSelector(selectCart)
+
+    // lock background scroll when cart drawer open
+    useScrollLock(isOpenCartDrawer);
     const [session, setSession] = useState<Session | null>(null)
     const [loadingProductId, setLoadingProductId] = useState<number | null>(null)
 

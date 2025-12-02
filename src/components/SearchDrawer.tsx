@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { searchProducts } from "../lib/api";
 import Loader from "./ui/Loader";
+import useScrollLock from "../hooks/useScrollLock";
 
 const SearchDrawer = () => {
     const dispatch = useDispatch();
@@ -41,6 +42,9 @@ const SearchDrawer = () => {
         navigate(`/product/${id}`);
         handleClose();
     };
+
+    // lock background scroll when search drawer open
+    useScrollLock(isOpenSearchDrawer);
 
     return (
         <>
@@ -95,7 +99,7 @@ const SearchDrawer = () => {
                                         onClick={() => handleProductClick(product.id)}
                                     >
                                         <div className="flex gap-4 items-start">
-                                            <div className="w-20 h-20 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
+                                            <div className="w-20 h-20 bg-gray-100 rounded-md overflow-hidden shrink-0">
                                                 <img
                                                     src={product.thumbnail}
                                                     alt={product.title}

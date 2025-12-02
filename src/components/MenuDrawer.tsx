@@ -2,12 +2,16 @@ import { X } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { closeSidebar, selectMenu } from "../app/features/menuDrawerSlice";
+import useScrollLock from "../hooks/useScrollLock";
 
 const MenuDrawer = () => {
 
     // Redux state
     const dispatch = useDispatch();
     const isOpenSidebar = useSelector(selectMenu)
+
+    // lock background scroll when drawer open
+    useScrollLock(isOpenSidebar);
 
     const handleNavClick = () => {
         dispatch(closeSidebar());

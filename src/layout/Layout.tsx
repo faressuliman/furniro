@@ -1,4 +1,6 @@
 import { Outlet } from "react-router-dom";
+import { Suspense } from "react";
+import Loader from "../components/ui/Loader";
 import Navbar from "./Navbar";
 import MenuDrawer from "../components/MenuDrawer";
 import UserDrawer from "../components/UserDrawer";
@@ -16,8 +18,16 @@ const Layout = () => {
         <UserDrawer />
         <CartDrawer />
         <SearchDrawer />
-        <main className="flex-1">
-          <Outlet />
+        <main className="flex-1 relative">
+          <Suspense
+            fallback={
+              <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none">
+                <Loader />
+              </div>
+            }
+          >
+            <Outlet />
+          </Suspense>
         </main>
         <Footer />
       </div>

@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { Session } from "@supabase/supabase-js";
 import Loader from "./ui/Loader";
+import useScrollLock from "../hooks/useScrollLock";
 import { syncCartToSupabase, clearLocalCart, fetchAndHydrateCart } from "../app/features/cartSlice";
 import { syncWishlistToSupabase, clearLocalWishlist, fetchAndHydrateWishlist } from "../app/features/wishlistSlice";
 
@@ -31,6 +32,8 @@ const UserDrawer = () => {
     // Redux state
     const dispatch = useDispatch<AppDispatch>();
     const isOpenUserDrawer = useSelector(selectUser)
+    // lock background scroll when user drawer open
+    useScrollLock(isOpenUserDrawer);
     const { loading } = useSelector(selectLogin)
     const { cartProducts } = useSelector((state: RootState) => state.cart)
     const { wishlistProducts } = useSelector((state: RootState) => state.wishlist)
