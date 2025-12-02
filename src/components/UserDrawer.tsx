@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { closeUserDrawer, selectUser } from "../app/features/userDrawerSlice";
 import Input from "./ui/Input";
 import Button from "./ui/Button";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { loginSchema } from "../validation";
@@ -22,6 +22,8 @@ import { syncCartToSupabase, clearLocalCart, fetchAndHydrateCart } from "../app/
 import { syncWishlistToSupabase, clearLocalWishlist, fetchAndHydrateWishlist } from "../app/features/wishlistSlice";
 
 const UserDrawer = () => {
+
+    const navigate = useNavigate()
 
     // Supabase session
     const [session, setSession] = useState<Session | null>(null)
@@ -101,6 +103,13 @@ const UserDrawer = () => {
         if (userLogin.rejected.match(result)) {
             setIsLoggingIn(false)
         }
+
+        if (userLogin.fulfilled.match(result)) {
+            setIsLoggingIn(false)
+            dispatch(closeUserDrawer())
+            navigate("/")
+        }
+
     }
 
     // Fetching user's username
