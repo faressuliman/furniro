@@ -83,7 +83,7 @@ const ResetPassword = () => {
       <PageHeader title="Reset Password" />
 
       <div
-        className="max-w-screen-3xl mx-auto lg:px-12 p-4 pt-16 pb-24 flex items-center justify-center min-h-[calc(100vh-200px)] bg-fit bg-auto bg-repeat"
+        className="auth-bg max-w-screen-3xl mx-auto lg:px-12 p-4 pt-16 pb-24 flex items-center justify-center min-h-[calc(100vh-200px)] bg-fit bg-auto bg-repeat"
         style={{ backgroundImage: `url(${registerBg})` }}
       >
         <div className="w-full max-w-md bg-white border border-gray-200 rounded-lg shadow-xl pt-10 pb-12 px-8">

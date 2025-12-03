@@ -10,7 +10,6 @@
     color: #B88E2F;
 }
 
-/* Mobile landscape mode fix for hero section */
 @media screen and (max-height: 500px) and (orientation: landscape) {
     section.relative.h-\[80vh\] {
         min-height: 600px !important;
@@ -35,3 +34,11 @@
             grid-template-columns: repeat(4, 1fr) !important;
         }
     }
+
+@media screen and (max-width: 767px) {
+    .auth-bg {
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+}

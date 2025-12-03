@@ -87,6 +87,11 @@ const wishlistSlice = createSlice({
                 state.wishlistProducts = state.wishlistProducts.filter(
                     (product) => product.id !== action.payload.id
                 )
+                toast.success("Removed from wishlist!", {
+                    position: "bottom-right",
+                    duration: 2000,
+                    style: { background: 'white', color: 'black' }
+                });
             }
 
             else {

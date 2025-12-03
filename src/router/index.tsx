@@ -6,7 +6,6 @@ import Shop from "../pages/Shop";
 const Home = lazy(() => import("../pages"));
 const About = lazy(() => import("../pages/About"));
 const Contact = lazy(() => import("../pages/Contact"));
-const Login = lazy(() => import("../pages/Login"));
 const Register = lazy(() => import("../pages/Register"));
 const NotFound = lazy(() => import("../pages/NotFound"));
 const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
@@ -24,7 +23,6 @@ const router = createBrowserRouter(
       <Route path="shop" element={<Shop />} />
       <Route path="about" element={ <About /> } />
       <Route path="contact" element={ <Contact /> } />
-      <Route path="login" element={ <Login /> } />
       <Route path="register" element={ <Register /> } />
       <Route path="forgotpassword" element={<ForgotPassword />} />
       <Route path="resetpassword" element={ <ResetPassword /> } />
